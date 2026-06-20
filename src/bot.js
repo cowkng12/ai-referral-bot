@@ -36,7 +36,6 @@ const translations = {
     newReferral: ({ name, points }) => `Новый реферал: ${name}. Начислен 1 балл.\nБаланс: ${points} балл.`,
     subscribeButton: '📣 Подписаться на канал',
     checkSubscriptionButton: '✅ Я подписался',
-    activation: ({ shopLine }) => `Подписка подтверждена.\n\nДля активации баланса пополните счет в нашем магазине минимум на $1. После пополнения баллы будут доступны для обмена на подписку.${shopLine}`,
     subscribeRequired: 'Чтобы пользоваться ботом, подпишись на наш канал Omni Key, затем нажми "Я подписался".',
     balance: ({ points, referrals }) => `Баланс: ${points} балл.\nРефералов: ${referrals}.`,
     profileText: ({ name, id, points, referrals }) => `👤 Профиль\n\nПользователь: ${name}\nID: ${id}\nБаланс: ${points} балл.\nРефералов: ${referrals}`,
@@ -89,7 +88,6 @@ const translations = {
     newReferral: ({ name, points }) => `New referral: ${name}. Added 1 point.\nBalance: ${points} pts.`,
     subscribeButton: '📣 Subscribe to channel',
     checkSubscriptionButton: '✅ I subscribed',
-    activation: ({ shopLine }) => `Subscription confirmed.\n\nTo activate your balance, top up at least $1 in our store. After the top-up, points will be available for subscription exchange.${shopLine}`,
     subscribeRequired: 'To use the bot, subscribe to our Omni Key channel, then tap "I subscribed".',
     balance: ({ points, referrals }) => `Balance: ${points} pts.\nReferrals: ${referrals}.`,
     profileText: ({ name, id, points, referrals }) => `👤 Profile\n\nUser: ${name}\nID: ${id}\nBalance: ${points} pts.\nReferrals: ${referrals}`,
@@ -142,7 +140,6 @@ const translations = {
     newReferral: ({ name, points }) => `新的推荐用户：${name}。已增加 1 积分。\n余额：${points} 积分。`,
     subscribeButton: '📣 订阅频道',
     checkSubscriptionButton: '✅ 我已订阅',
-    activation: ({ shopLine }) => `订阅已确认。\n\n要激活余额，请在我们的商店至少充值 $1。充值后，积分可用于兑换订阅。${shopLine}`,
     subscribeRequired: '要使用机器人，请先订阅 Omni Key 频道，然后点击“我已订阅”。',
     balance: ({ points, referrals }) => `余额：${points} 积分。\n推荐人数：${referrals}。`,
     profileText: ({ name, id, points, referrals }) => `👤 个人资料\n\n用户：${name}\nID：${id}\n余额：${points} 积分。\n推荐人数：${referrals}`,
@@ -403,13 +400,6 @@ function subscribeKeyboard(user) {
   return Markup.inlineKeyboard(buttons);
 }
 
-function activationMessage(user) {
-  const text = getUserTranslation(user);
-  const shopLine = shopUrl ? `\n\n${text.store}: ${shopUrl}` : '';
-
-  return text.activation({ shopLine });
-}
-
 async function isSubscribed(ctx) {
   const user = ensureUser(ctx.from);
 
@@ -657,7 +647,7 @@ bot.action(/^lang:(ru|en|zh)$/, async (ctx) => {
     return;
   }
 
-  return ctx.reply(activationMessage(user), mainKeyboard(user));
+  return ctx.reply(text.subscriptionConfirmed, mainKeyboard(user));
 });
 
 bot.action('check_subscription', async (ctx) => {
@@ -666,7 +656,7 @@ bot.action('check_subscription', async (ctx) => {
 
   if (await isSubscribed(ctx)) {
     await ctx.answerCbQuery(text.subscriptionConfirmed).catch(() => null);
-    await ctx.reply(activationMessage(user), mainKeyboard(user));
+    await ctx.reply(text.subscriptionConfirmed, mainKeyboard(user));
     return;
   }
 
