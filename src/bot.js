@@ -263,7 +263,7 @@ function sendRedeem(ctx) {
 }
 
 function sendSupport(ctx) {
-  return ctx.reply('💬 Support\n\nПо всем вопросам можете обращаться в поддержку: @OmniKeySUPPORT');
+  return ctx.reply('💬 Support\n\nПо всем вопросам рекомендуем обращаться в поддержку: @OmniKeySUPPORT');
 }
 
 function sendMainChannel(ctx) {
