@@ -67,7 +67,7 @@ const translations = {
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
-    purchaseText: ({ title, points }) => `Покупка оформлена: ${title}. Остаток: ${points} балл. Администратор скоро выдаст доступ.`,
+    purchaseText: ({ title, points }) => `Поздравляем с покупкой: ${title}. Остаток: ${points} балл.\n\nЧтобы получить данные от товара, пополните баланс нашего магазина на $1. Это поможет подтвердить, что вы не бот, и в следующие разы получать товары без задержек.`,
     adminPurchase: ({ id, name, userId, title, price }) => `Новая покупка #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
     help: 'Команды: /start, /balance, /link, /shop. Пригласи друга по ссылке и получи 1 балл после его первого запуска бота.',
     services: {
@@ -119,7 +119,7 @@ const translations = {
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
-    purchaseText: ({ title, points }) => `Purchase created: ${title}. Remaining balance: ${points} pts. An administrator will provide access soon.`,
+    purchaseText: ({ title, points }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nTo receive the product details, top up our store balance with $1. This helps us confirm you are not a bot, so next time you can receive products without delays.`,
     adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
     help: 'Commands: /start, /balance, /link, /shop. Invite a friend with your link and get 1 point after their first bot launch.',
     services: {
@@ -171,7 +171,7 @@ const translations = {
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
-    purchaseText: ({ title, points }) => `购买已创建：${title}。剩余余额：${points} 积分。管理员很快会提供访问权限。`,
+    purchaseText: ({ title, points }) => `恭喜购买：${title}。剩余余额：${points} 积分。\n\n要获取商品信息，请在我们的商店充值 $1。这有助于确认你不是机器人，以后可以更快收到商品。`,
     adminPurchase: ({ id, name, userId, title, price }) => `新购买 #${id}\n用户：${name} (${userId})\n服务：${title}\n价格：${price}`,
     help: '命令：/start, /balance, /link, /shop。通过链接邀请好友，在他们首次启动机器人后获得 1 积分。',
     services: {
