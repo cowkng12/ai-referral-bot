@@ -194,7 +194,7 @@ async function rewardReferral(user) {
   }
 
   saveDb();
-  await bot.telegram.sendMessage(referrerId, `Новый реферал: ${user.name}. Начислен 1 балл.`).catch(() => null);
+  await bot.telegram.sendMessage(referrerId, `Новый реферал: ${user.name}. Начислен 1 балл.\nБаланс: ${referrer.points} балл.`).catch(() => null);
 }
 
 function subscribeKeyboard() {
