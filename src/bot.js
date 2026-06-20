@@ -324,11 +324,12 @@ async function notifyAdmins(message) {
 }
 
 bot.start(async (ctx) => {
+  const isNewUser = !db.users[String(ctx.from.id)];
   const user = ensureUser(ctx.from);
   const payload = ctx.startPayload || '';
   const referrerId = payload.startsWith('ref_') ? payload.slice(4) : null;
 
-  if (referrerId && referrerId !== String(user.id) && !user.invitedBy && !user.pendingReferrerId && !user.referralRewarded && db.users[referrerId]) {
+  if (isNewUser && referrerId && referrerId !== String(user.id) && !user.invitedBy && !user.pendingReferrerId && !user.referralRewarded && db.users[referrerId]) {
     user.pendingReferrerId = Number(referrerId);
     saveDb();
   }
