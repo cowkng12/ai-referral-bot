@@ -345,8 +345,8 @@ bot.action('check_subscription', async (ctx) => {
   }
 
   markSubscribed(ctx.from);
-  await ctx.answerCbQuery('Подписка сохранена.').catch(() => null);
-  await ctx.reply('Спасибо! Подписка сохранена, теперь бот больше не будет запрашивать ее повторно.', mainKeyboard());
+  await ctx.answerCbQuery('Готово.').catch(() => null);
+  await ctx.reply('Спасибо за подписку! Теперь можно пользоваться ботом.', mainKeyboard());
 });
 
 bot.action(/^buy:(.+)$/, async (ctx) => {
