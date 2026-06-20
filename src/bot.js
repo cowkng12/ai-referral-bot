@@ -345,6 +345,11 @@ function getUserName(from) {
   return from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ') || String(from.id);
 }
 
+function getShopUrl(user) {
+  const separator = shopUrl.includes('?') ? '&' : '?';
+  return `${shopUrl}${separator}start=refbot_${user.id}`;
+}
+
 function getTranslation(language) {
   return translations[language] || translations.ru;
 }
@@ -563,7 +568,8 @@ function sendMainChannel(ctx) {
 }
 
 function sendShop(ctx) {
-  return ctx.reply(getCtxTranslation(ctx).storeText({ url: shopUrl }));
+  const user = ensureUser(ctx.from);
+  return ctx.reply(getUserTranslation(user).storeText({ url: getShopUrl(user) }));
 }
 
 function toggleLanguage(ctx) {
@@ -768,7 +774,7 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   saveDb();
 
   await ctx.answerCbQuery(text.purchaseCreated).catch(() => null);
-  await ctx.reply(text.purchaseText({ title: service.title, points: user.points, shopUrl }));
+  await ctx.reply(text.purchaseText({ title: service.title, points: user.points, shopUrl: getShopUrl(user) }));
   await notifyAdmins(translations.ru.adminPurchase({ id: purchase.id, name: user.name, userId: user.id, title: service.title, price: service.price }));
 });
 
