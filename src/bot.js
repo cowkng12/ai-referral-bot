@@ -22,6 +22,168 @@ const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const dbPath = path.join(dataDir, 'db.json');
 
+const translations = {
+  ru: {
+    profile: '👤 Профиль',
+    redeem: '🎁 Обмен',
+    myLink: '🔗 Моя ссылка',
+    progress: '📊 Прогресс',
+    store: '🛍 Магазин',
+    support: '💬 Поддержка',
+    mainChannel: '📣 Основной канал',
+    changeLanguage: '🌍 Сменить язык',
+    servicePrice: ({ price }) => `${price} балл.`,
+    newReferral: ({ name, points }) => `Новый реферал: ${name}. Начислен 1 балл.\nБаланс: ${points} балл.`,
+    subscribeButton: '📣 Подписаться на канал',
+    checkSubscriptionButton: '✅ Я подписался',
+    activation: ({ shopLine }) => `Подписка подтверждена.\n\nДля активации баланса пополните счет в нашем магазине минимум на $1. После пополнения баллы будут доступны для обмена на подписку.${shopLine}`,
+    subscribeRequired: 'Чтобы пользоваться ботом, подпишись на наш канал Omni Key, затем нажми "Я подписался".',
+    balance: ({ points, referrals }) => `Баланс: ${points} балл.\nРефералов: ${referrals}.`,
+    profileText: ({ name, id, points, referrals }) => `👤 Профиль\n\nПользователь: ${name}\nID: ${id}\nБаланс: ${points} балл.\nРефералов: ${referrals}`,
+    progressText: ({ points, referrals }) => `📊 Прогресс\n\nБаллы: ${points}\nПриглашено друзей: ${referrals}`,
+    redeemText: ({ services }) => `🎁 Обмен\n\nВыбери сервис для обмена баллов:\n\n${services}`,
+    supportText: '💬 Поддержка\n\nПо всем вопросам рекомендуем обращаться в поддержку: @OmniKeySUPPORT',
+    channelText: ({ url }) => (url ? `📣 Основной канал: ${url}` : '📣 Основной канал пока не настроен.'),
+    storeText: ({ url }) => `🛍 Магазин\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot\n${url}`,
+    chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
+    referralLink: ({ link }) => `🔗 Моя ссылка\n\n${link}\n\nЗа каждого нового приглашенного ты получаешь 1 балл.`,
+    adminOnly: 'Команда доступна только администратору.',
+    adminHelp: 'Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю',
+    addPointsUsage: 'Использование: /addpoints USER_ID AMOUNT',
+    pointsAdded: ({ amount, name, points }) => `Начислено ${amount} балл. пользователю ${name}. Баланс: ${points} балл.`,
+    welcome: 'Привет! Приглашай людей по своей ссылке и получай 1 балл за каждого нового реферала. Баллы можно обменять на подписку.',
+    done: 'Готово.',
+    subscriptionConfirmed: 'Подписка подтверждена.',
+    subscriptionMissing: 'Подписка не найдена.',
+    subscribeAgain: 'Сначала подпишись на канал, затем нажми "Я подписался" еще раз.',
+    serviceMissing: 'Сервис не найден.',
+    notEnoughPoints: 'Недостаточно баллов.',
+    notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
+    purchaseCreated: 'Покупка создана.',
+    purchaseText: ({ title, points }) => `Покупка оформлена: ${title}. Остаток: ${points} балл. Администратор скоро выдаст доступ.`,
+    adminPurchase: ({ id, name, userId, title, price }) => `Новая покупка #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
+    help: 'Команды: /start, /balance, /link, /shop. Пригласи друга по ссылке и получи 1 балл после его первого запуска бота.',
+    services: {
+      chatgpt: 'Подписка ChatGPT Plus.',
+      claude: 'Подписка Claude Pro.',
+      cursor: 'Подписка Cursor Pro для разработки.',
+      gemini: 'Доступ к расширенным возможностям Gemini.',
+      perplexity: 'Подписка Perplexity Pro для поиска и исследований.',
+      midjourney: 'Доступ к генерации изображений Midjourney.',
+      runway: 'Доступ к AI-инструментам для видео.',
+      elevenlabs: 'Доступ к AI-озвучке и голосам.',
+      notion: 'Подписка Notion AI для работы с текстами.',
+      pro_pack: 'Пакет премиум AI-сервисов.'
+    }
+  },
+  en: {
+    profile: '👤 Profile',
+    redeem: '🎁 Redeem',
+    myLink: '🔗 My Link',
+    progress: '📊 Progress',
+    store: '🛍 Store',
+    support: '💬 Support',
+    mainChannel: '📣 Main Channel',
+    changeLanguage: '🌍 Change Language',
+    servicePrice: ({ price }) => `${price} pts`,
+    newReferral: ({ name, points }) => `New referral: ${name}. Added 1 point.\nBalance: ${points} pts.`,
+    subscribeButton: '📣 Subscribe to channel',
+    checkSubscriptionButton: '✅ I subscribed',
+    activation: ({ shopLine }) => `Subscription confirmed.\n\nTo activate your balance, top up at least $1 in our store. After the top-up, points will be available for subscription exchange.${shopLine}`,
+    subscribeRequired: 'To use the bot, subscribe to our Omni Key channel, then tap "I subscribed".',
+    balance: ({ points, referrals }) => `Balance: ${points} pts.\nReferrals: ${referrals}.`,
+    profileText: ({ name, id, points, referrals }) => `👤 Profile\n\nUser: ${name}\nID: ${id}\nBalance: ${points} pts.\nReferrals: ${referrals}`,
+    progressText: ({ points, referrals }) => `📊 Progress\n\nPoints: ${points}\nFriends invited: ${referrals}`,
+    redeemText: ({ services }) => `🎁 Redeem\n\nChoose a service to exchange points:\n\n${services}`,
+    supportText: '💬 Support\n\nFor any questions, contact support: @OmniKeySUPPORT',
+    channelText: ({ url }) => (url ? `📣 Main Channel: ${url}` : '📣 Main Channel is not configured yet.'),
+    storeText: ({ url }) => `🛍 Store\n\nOur AI services store: @OminiKey_bot\n${url}`,
+    chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
+    referralLink: ({ link }) => `🔗 My Link\n\n${link}\n\nYou get 1 point for each new invited user.`,
+    adminOnly: 'This command is available only to administrators.',
+    adminHelp: 'Admin commands:\n/addpoints USER_ID AMOUNT - add points to a user',
+    addPointsUsage: 'Usage: /addpoints USER_ID AMOUNT',
+    pointsAdded: ({ amount, name, points }) => `Added ${amount} pts to ${name}. Balance: ${points} pts.`,
+    welcome: 'Hi! Invite people with your link and get 1 point for each new referral. Points can be exchanged for a subscription.',
+    done: 'Done.',
+    subscriptionConfirmed: 'Subscription confirmed.',
+    subscriptionMissing: 'Subscription not found.',
+    subscribeAgain: 'Subscribe to the channel first, then tap "I subscribed" again.',
+    serviceMissing: 'Service not found.',
+    notEnoughPoints: 'Not enough points.',
+    notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
+    purchaseCreated: 'Purchase created.',
+    purchaseText: ({ title, points }) => `Purchase created: ${title}. Remaining balance: ${points} pts. An administrator will provide access soon.`,
+    adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
+    help: 'Commands: /start, /balance, /link, /shop. Invite a friend with your link and get 1 point after their first bot launch.',
+    services: {
+      chatgpt: 'ChatGPT Plus subscription.',
+      claude: 'Claude Pro subscription.',
+      cursor: 'Cursor Pro subscription for development.',
+      gemini: 'Access to advanced Gemini features.',
+      perplexity: 'Perplexity Pro subscription for search and research.',
+      midjourney: 'Access to Midjourney image generation.',
+      runway: 'Access to AI tools for video.',
+      elevenlabs: 'Access to AI voiceover and voices.',
+      notion: 'Notion AI subscription for working with text.',
+      pro_pack: 'Premium AI services package.'
+    }
+  },
+  zh: {
+    profile: '👤 个人资料',
+    redeem: '🎁 兑换',
+    myLink: '🔗 我的链接',
+    progress: '📊 进度',
+    store: '🛍 商店',
+    support: '💬 支持',
+    mainChannel: '📣 主频道',
+    changeLanguage: '🌍 更改语言',
+    servicePrice: ({ price }) => `${price} 积分`,
+    newReferral: ({ name, points }) => `新的推荐用户：${name}。已增加 1 积分。\n余额：${points} 积分。`,
+    subscribeButton: '📣 订阅频道',
+    checkSubscriptionButton: '✅ 我已订阅',
+    activation: ({ shopLine }) => `订阅已确认。\n\n要激活余额，请在我们的商店至少充值 $1。充值后，积分可用于兑换订阅。${shopLine}`,
+    subscribeRequired: '要使用机器人，请先订阅 Omni Key 频道，然后点击“我已订阅”。',
+    balance: ({ points, referrals }) => `余额：${points} 积分。\n推荐人数：${referrals}。`,
+    profileText: ({ name, id, points, referrals }) => `👤 个人资料\n\n用户：${name}\nID：${id}\n余额：${points} 积分。\n推荐人数：${referrals}`,
+    progressText: ({ points, referrals }) => `📊 进度\n\n积分：${points}\n已邀请好友：${referrals}`,
+    redeemText: ({ services }) => `🎁 兑换\n\n选择要兑换的服务：\n\n${services}`,
+    supportText: '💬 支持\n\n如有问题，请联系支持：@OmniKeySUPPORT',
+    channelText: ({ url }) => (url ? `📣 主频道：${url}` : '📣 主频道尚未配置。'),
+    storeText: ({ url }) => `🛍 商店\n\n我们的 AI 服务商店：@OminiKey_bot\n${url}`,
+    chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
+    referralLink: ({ link }) => `🔗 我的链接\n\n${link}\n\n每邀请一个新用户，你将获得 1 积分。`,
+    adminOnly: '此命令仅管理员可用。',
+    adminHelp: '管理员命令：\n/addpoints USER_ID AMOUNT - 给用户添加积分',
+    addPointsUsage: '用法：/addpoints USER_ID AMOUNT',
+    pointsAdded: ({ amount, name, points }) => `已给 ${name} 增加 ${amount} 积分。余额：${points} 积分。`,
+    welcome: '你好！通过你的链接邀请用户，每个新推荐用户可获得 1 积分。积分可以兑换订阅。',
+    done: '完成。',
+    subscriptionConfirmed: '订阅已确认。',
+    subscriptionMissing: '未找到订阅。',
+    subscribeAgain: '请先订阅频道，然后再次点击“我已订阅”。',
+    serviceMissing: '未找到服务。',
+    notEnoughPoints: '积分不足。',
+    notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
+    purchaseCreated: '购买已创建。',
+    purchaseText: ({ title, points }) => `购买已创建：${title}。剩余余额：${points} 积分。管理员很快会提供访问权限。`,
+    adminPurchase: ({ id, name, userId, title, price }) => `新购买 #${id}\n用户：${name} (${userId})\n服务：${title}\n价格：${price}`,
+    help: '命令：/start, /balance, /link, /shop。通过链接邀请好友，在他们首次启动机器人后获得 1 积分。',
+    services: {
+      chatgpt: 'ChatGPT Plus 订阅。',
+      claude: 'Claude Pro 订阅。',
+      cursor: '用于开发的 Cursor Pro 订阅。',
+      gemini: '访问 Gemini 高级功能。',
+      perplexity: '用于搜索和研究的 Perplexity Pro 订阅。',
+      midjourney: '访问 Midjourney 图像生成。',
+      runway: '访问用于视频的 AI 工具。',
+      elevenlabs: '访问 AI 配音和语音。',
+      notion: '用于文本工作的 Notion AI 订阅。',
+      pro_pack: '高级 AI 服务套餐。'
+    }
+  }
+};
+
 const defaultDb = {
   users: {},
   purchases: [],
@@ -117,6 +279,18 @@ function getUserName(from) {
   return from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ') || String(from.id);
 }
 
+function getTranslation(language) {
+  return translations[language] || translations.ru;
+}
+
+function getUserTranslation(user) {
+  return getTranslation(user.language);
+}
+
+function getCtxTranslation(ctx) {
+  return getUserTranslation(ensureUser(ctx.from));
+}
+
 function ensureUser(from) {
   const id = String(from.id);
 
@@ -148,13 +322,15 @@ function ensureUser(from) {
   return db.users[id];
 }
 
-function mainKeyboard() {
+function mainKeyboard(user) {
+  const text = getUserTranslation(user);
+
   return Markup.keyboard([
-    ['👤 Profile', '🎁 Redeem'],
-    ['🔗 My Link', '📊 Progress'],
-    ['🛍 Store', '💬 Support'],
-    ['📣 Main Channel'],
-    ['🌍 Сменить язык']
+    [text.profile, text.redeem],
+    [text.myLink, text.progress],
+    [text.store, text.support],
+    [text.mainChannel],
+    [text.changeLanguage]
   ]).resize();
 }
 
@@ -174,10 +350,16 @@ function getServiceIcon(user, service) {
   return hasPurchased(user, service.id) ? '🔑' : '🔒';
 }
 
+function getServiceDescription(text, service) {
+  return text.services[service.id] || service.description;
+}
+
 function serviceKeyboard(user) {
+  const text = getUserTranslation(user);
+
   return Markup.inlineKeyboard(
     db.services.map((service) => [
-      Markup.button.callback(`${getServiceIcon(user, service)} ${service.title} - ${service.price} балл.`, `buy:${service.id}`)
+      Markup.button.callback(`${getServiceIcon(user, service)} ${service.title} - ${text.servicePrice(service)}`, `buy:${service.id}`)
     ])
   );
 }
@@ -204,25 +386,28 @@ async function rewardReferral(user) {
   }
 
   saveDb();
-  await bot.telegram.sendMessage(referrerId, `Новый реферал: ${user.name}. Начислен 1 балл.\nБаланс: ${referrer.points} балл.`).catch(() => null);
+  const text = getUserTranslation(referrer);
+  await bot.telegram.sendMessage(referrerId, text.newReferral({ name: user.name, points: referrer.points })).catch(() => null);
 }
 
-function subscribeKeyboard() {
+function subscribeKeyboard(user) {
+  const text = getUserTranslation(user);
   const buttons = [];
 
   if (mainChannelUrl) {
-    buttons.push([Markup.button.url('📣 Подписаться на канал', mainChannelUrl)]);
+    buttons.push([Markup.button.url(text.subscribeButton, mainChannelUrl)]);
   }
 
-  buttons.push([Markup.button.callback('✅ Я подписался', 'check_subscription')]);
+  buttons.push([Markup.button.callback(text.checkSubscriptionButton, 'check_subscription')]);
 
   return Markup.inlineKeyboard(buttons);
 }
 
-function activationMessage() {
-  const shopLine = shopUrl ? `\n\nМагазин: ${shopUrl}` : '';
+function activationMessage(user) {
+  const text = getUserTranslation(user);
+  const shopLine = shopUrl ? `\n\n${text.store}: ${shopUrl}` : '';
 
-  return `Подписка подтверждена.\n\nДля активации баланса пополните счет в нашем магазине минимум на $1. После пополнения баллы будут доступны для обмена на подписку.${shopLine}`;
+  return text.activation({ shopLine });
 }
 
 async function isSubscribed(ctx) {
@@ -258,13 +443,16 @@ async function isSubscribed(ctx) {
 }
 
 async function requireSubscription(ctx) {
+  const user = ensureUser(ctx.from);
+  const text = getUserTranslation(user);
+
   if (await isSubscribed(ctx)) {
     return true;
   }
 
   await ctx.reply(
-    'Чтобы пользоваться ботом, подпишись на наш канал Omni Key, затем нажми "Я подписался".',
-    subscribeKeyboard()
+    text.subscribeRequired,
+    subscribeKeyboard(user)
   );
   return false;
 }
@@ -281,54 +469,55 @@ function withSubscription(handler) {
 
 function sendBalance(ctx) {
   const user = ensureUser(ctx.from);
-  return ctx.reply(`Баланс: ${user.points} балл.\nРефералов: ${user.referrals.length}.`);
+  const text = getUserTranslation(user);
+  return ctx.reply(text.balance({ points: user.points, referrals: user.referrals.length }));
 }
 
 function sendProfile(ctx) {
   const user = ensureUser(ctx.from);
-  return ctx.reply(
-    `👤 Profile\n\nПользователь: ${user.name}\nID: ${user.id}\nБаланс: ${user.points} балл.\nРефералов: ${user.referrals.length}`
-  );
+  const text = getUserTranslation(user);
+  return ctx.reply(text.profileText({ name: user.name, id: user.id, points: user.points, referrals: user.referrals.length }));
 }
 
 function sendProgress(ctx) {
   const user = ensureUser(ctx.from);
-  return ctx.reply(
-    `📊 Progress\n\nБаллы: ${user.points}\nПриглашено друзей: ${user.referrals.length}`
-  );
+  const text = getUserTranslation(user);
+  return ctx.reply(text.progressText({ points: user.points, referrals: user.referrals.length }));
 }
 
 function sendRedeem(ctx) {
   const user = ensureUser(ctx.from);
-  const text = db.services
-    .map((service) => `${getServiceIcon(user, service)} ${service.title}\nЦена: ${service.price} балл.\n${service.description}`)
+  const text = getUserTranslation(user);
+  const services = db.services
+    .map((service) => `${getServiceIcon(user, service)} ${service.title}\n${text.servicePrice(service)}\n${getServiceDescription(text, service)}`)
     .join('\n\n');
 
-  return ctx.reply(`🎁 Redeem\n\nВыбери сервис для обмена баллов:\n\n${text}`, serviceKeyboard(user));
+  return ctx.reply(text.redeemText({ services }), serviceKeyboard(user));
 }
 
 function sendSupport(ctx) {
-  return ctx.reply('💬 Support\n\nПо всем вопросам рекомендуем обращаться в поддержку: @OmniKeySUPPORT');
+  return ctx.reply(getCtxTranslation(ctx).supportText);
 }
 
 function sendMainChannel(ctx) {
-  return ctx.reply(mainChannelUrl ? `📣 Main Channel: ${mainChannelUrl}` : '📣 Main Channel пока не настроен.');
+  return ctx.reply(getCtxTranslation(ctx).channelText({ url: mainChannelUrl }));
 }
 
 function sendShop(ctx) {
-  return ctx.reply(`🛍 Store\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot\n${shopUrl}`);
+  return ctx.reply(getCtxTranslation(ctx).storeText({ url: shopUrl }));
 }
 
 function toggleLanguage(ctx) {
-  return ctx.reply('Выберите язык / Choose language / 选择语言:', languageKeyboard());
+  return ctx.reply(getCtxTranslation(ctx).chooseLanguage, languageKeyboard());
 }
 
 async function sendReferralLink(ctx) {
   const user = ensureUser(ctx.from);
   const botInfo = await ctx.telegram.getMe();
   const link = `https://t.me/${botInfo.username}?start=ref_${user.id}`;
+  const text = getUserTranslation(user);
 
-  return ctx.reply(`🔗 My Link\n\n${link}\n\nЗа каждого нового приглашенного ты получаешь 1 балл.`);
+  return ctx.reply(text.referralLink({ link }));
 }
 
 async function notifyAdmins(message) {
@@ -340,23 +529,27 @@ function isAdmin(from) {
 }
 
 function sendAdminHelp(ctx) {
+  const text = getCtxTranslation(ctx);
+
   if (!isAdmin(ctx.from)) {
-    return ctx.reply('Команда доступна только администратору.');
+    return ctx.reply(text.adminOnly);
   }
 
-  return ctx.reply('Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю');
+  return ctx.reply(text.adminHelp);
 }
 
 function addPoints(ctx) {
+  const text = getCtxTranslation(ctx);
+
   if (!isAdmin(ctx.from)) {
-    return ctx.reply('Команда доступна только администратору.');
+    return ctx.reply(text.adminOnly);
   }
 
   const [, userId, amountValue] = ctx.message.text.trim().split(/\s+/);
   const amount = Number(amountValue);
 
   if (!/^\d+$/.test(userId || '') || !Number.isInteger(amount) || amount <= 0) {
-    return ctx.reply('Использование: /addpoints USER_ID AMOUNT');
+    return ctx.reply(text.addPointsUsage);
   }
 
   const user = db.users[userId] || {
@@ -377,7 +570,7 @@ function addPoints(ctx) {
   db.users[userId] = user;
   saveDb();
 
-  return ctx.reply(`Начислено ${amount} балл. пользователю ${user.name}. Баланс: ${user.points} балл.`);
+  return ctx.reply(text.pointsAdded({ amount, name: user.name, points: user.points }));
 }
 
 bot.start(async (ctx) => {
@@ -392,7 +585,7 @@ bot.start(async (ctx) => {
   }
 
   if (!user.languageSelected) {
-    return ctx.reply('Выберите язык / Choose language / 选择语言:', languageKeyboard());
+    return ctx.reply(getUserTranslation(user).chooseLanguage, languageKeyboard());
   }
 
   if (!(await requireSubscription(ctx))) {
@@ -400,26 +593,44 @@ bot.start(async (ctx) => {
   }
 
   return ctx.reply(
-    'Привет! Приглашай людей по своей ссылке и получай 1 балл за каждого нового реферала. Баллы можно обменять на подписку.',
-    mainKeyboard()
+    getUserTranslation(user).welcome,
+    mainKeyboard(user)
   );
 });
 
 bot.hears('Баланс', withSubscription(sendBalance));
+bot.hears('Balance', withSubscription(sendBalance));
+bot.hears('余额', withSubscription(sendBalance));
+bot.hears('👤 Профиль', withSubscription(sendProfile));
 bot.hears('👤 Profile', withSubscription(sendProfile));
+bot.hears('👤 个人资料', withSubscription(sendProfile));
+bot.hears('🎁 Обмен', withSubscription(sendRedeem));
 bot.hears('🎁 Redeem', withSubscription(sendRedeem));
+bot.hears('🎁 兑换', withSubscription(sendRedeem));
+bot.hears('🔗 Моя ссылка', withSubscription(sendReferralLink));
 bot.hears('🔗 My Link', withSubscription(sendReferralLink));
+bot.hears('🔗 我的链接', withSubscription(sendReferralLink));
+bot.hears('📊 Прогресс', withSubscription(sendProgress));
 bot.hears('📊 Progress', withSubscription(sendProgress));
+bot.hears('📊 进度', withSubscription(sendProgress));
+bot.hears('🛍 Магазин', withSubscription(sendShop));
 bot.hears('🛍 Store', withSubscription(sendShop));
+bot.hears('🛍 商店', withSubscription(sendShop));
+bot.hears('💬 Поддержка', withSubscription(sendSupport));
 bot.hears('💬 Support', withSubscription(sendSupport));
+bot.hears('💬 支持', withSubscription(sendSupport));
+bot.hears('📣 Основной канал', withSubscription(sendMainChannel));
 bot.hears('📣 Main Channel', withSubscription(sendMainChannel));
+bot.hears('📣 主频道', withSubscription(sendMainChannel));
 bot.hears('🌍 Сменить язык', withSubscription(toggleLanguage));
+bot.hears('🌍 Change Language', withSubscription(toggleLanguage));
+bot.hears('🌍 更改语言', withSubscription(toggleLanguage));
 
 bot.hears('Моя ссылка', withSubscription(sendReferralLink));
 
 bot.hears('Магазин', withSubscription(sendShop));
 
-bot.hears('Помощь', withSubscription((ctx) => ctx.reply('Команды: /start, /balance, /link, /shop. Пригласи друга по ссылке и получи 1 балл после его первого запуска бота.')));
+bot.hears('Помощь', withSubscription((ctx) => ctx.reply(getCtxTranslation(ctx).help)));
 bot.hears('Ссылка на магазин', withSubscription(sendShop));
 bot.command('balance', withSubscription(sendBalance));
 bot.command('profile', withSubscription(sendProfile));
@@ -438,25 +649,29 @@ bot.action(/^lang:(ru|en|zh)$/, async (ctx) => {
   user.language = ctx.match[1];
   user.languageSelected = true;
   saveDb();
+  const text = getUserTranslation(user);
 
-  await ctx.answerCbQuery('Готово.').catch(() => null);
+  await ctx.answerCbQuery(text.done).catch(() => null);
 
   if (!(await requireSubscription(ctx))) {
     return;
   }
 
-  return ctx.reply(activationMessage(), mainKeyboard());
+  return ctx.reply(activationMessage(user), mainKeyboard(user));
 });
 
 bot.action('check_subscription', async (ctx) => {
+  const user = ensureUser(ctx.from);
+  const text = getUserTranslation(user);
+
   if (await isSubscribed(ctx)) {
-    await ctx.answerCbQuery('Подписка подтверждена.').catch(() => null);
-    await ctx.reply(activationMessage(), mainKeyboard());
+    await ctx.answerCbQuery(text.subscriptionConfirmed).catch(() => null);
+    await ctx.reply(activationMessage(user), mainKeyboard(user));
     return;
   }
 
-  await ctx.answerCbQuery('Подписка не найдена.').catch(() => null);
-  await ctx.reply('Сначала подпишись на канал, затем нажми "Я подписался" еще раз.', subscribeKeyboard());
+  await ctx.answerCbQuery(text.subscriptionMissing).catch(() => null);
+  await ctx.reply(text.subscribeAgain, subscribeKeyboard(user));
 });
 
 bot.action(/^buy:(.+)$/, async (ctx) => {
@@ -465,16 +680,17 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   }
 
   const user = ensureUser(ctx.from);
+  const text = getUserTranslation(user);
   const service = db.services.find((item) => item.id === ctx.match[1]);
 
   if (!service) {
-    await ctx.answerCbQuery('Сервис не найден.').catch(() => null);
+    await ctx.answerCbQuery(text.serviceMissing).catch(() => null);
     return;
   }
 
   if (user.points < service.price) {
-    await ctx.answerCbQuery('Недостаточно баллов.').catch(() => null);
-    await ctx.reply(`Нужно ${service.price} балл., у тебя ${user.points}.`);
+    await ctx.answerCbQuery(text.notEnoughPoints).catch(() => null);
+    await ctx.reply(text.notEnoughPointsText({ price: service.price, points: user.points }));
     return;
   }
 
@@ -492,9 +708,9 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   db.purchases.push(purchase);
   saveDb();
 
-  await ctx.answerCbQuery('Покупка создана.').catch(() => null);
-  await ctx.reply(`Покупка оформлена: ${service.title}. Остаток: ${user.points} балл. Администратор скоро выдаст доступ.`);
-  await notifyAdmins(`Новая покупка #${purchase.id}\nПользователь: ${user.name} (${user.id})\nСервис: ${service.title}\nЦена: ${service.price}`);
+  await ctx.answerCbQuery(text.purchaseCreated).catch(() => null);
+  await ctx.reply(text.purchaseText({ title: service.title, points: user.points }));
+  await notifyAdmins(translations.ru.adminPurchase({ id: purchase.id, name: user.name, userId: user.id, title: service.title, price: service.price }));
 });
 
 bot.catch((error) => {
