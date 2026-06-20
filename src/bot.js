@@ -126,6 +126,9 @@ function ensureUser(from) {
       name: getUserName(from),
       points: 0,
       invitedBy: null,
+      pendingReferrerId: null,
+      referralRewarded: false,
+      language: 'ru',
       referrals: [],
       subscribed: false,
       createdAt: new Date().toISOString()
@@ -134,6 +137,9 @@ function ensureUser(from) {
   } else {
     db.users[id].name = getUserName(from);
     db.users[id].subscribed = Boolean(db.users[id].subscribed);
+    db.users[id].pendingReferrerId = db.users[id].pendingReferrerId || null;
+    db.users[id].referralRewarded = Boolean(db.users[id].referralRewarded || db.users[id].invitedBy);
+    db.users[id].language = db.users[id].language || 'ru';
     saveDb();
   }
 
@@ -145,7 +151,8 @@ function mainKeyboard() {
     ['👤 Profile', '🎁 Redeem'],
     ['🔗 My Link', '📊 Progress'],
     ['🛍 Store', '💬 Support'],
-    ['📣 Main Channel']
+    ['📣 Main Channel'],
+    ['🌍 Сменить язык']
   ]).resize();
 }
 
@@ -165,6 +172,31 @@ function serviceKeyboard(user) {
   );
 }
 
+async function rewardReferral(user) {
+  if (!user.pendingReferrerId || user.referralRewarded) {
+    return;
+  }
+
+  const referrerId = String(user.pendingReferrerId);
+  const referrer = db.users[referrerId];
+
+  if (!referrer) {
+    return;
+  }
+
+  user.invitedBy = Number(referrerId);
+  user.pendingReferrerId = null;
+  user.referralRewarded = true;
+  referrer.points += 1;
+
+  if (!referrer.referrals.includes(user.id)) {
+    referrer.referrals.push(user.id);
+  }
+
+  saveDb();
+  await bot.telegram.sendMessage(referrerId, `Новый реферал: ${user.name}. Начислен 1 балл.`).catch(() => null);
+}
+
 function subscribeKeyboard() {
   const buttons = [];
 
@@ -181,12 +213,14 @@ async function isSubscribed(ctx) {
   const user = ensureUser(ctx.from);
 
   if (user.subscribed) {
+    await rewardReferral(user);
     return true;
   }
 
   if (!mainChannelUsername) {
     user.subscribed = true;
     saveDb();
+    await rewardReferral(user);
     return true;
   }
 
@@ -197,6 +231,7 @@ async function isSubscribed(ctx) {
     if (subscribed) {
       user.subscribed = true;
       saveDb();
+      await rewardReferral(user);
     }
 
     return subscribed;
@@ -204,12 +239,6 @@ async function isSubscribed(ctx) {
     console.error('Subscription check failed:', error.message);
     return false;
   }
-}
-
-function markSubscribed(from) {
-  const user = ensureUser(from);
-  user.subscribed = true;
-  saveDb();
 }
 
 async function requireSubscription(ctx) {
@@ -274,6 +303,14 @@ function sendShop(ctx) {
   return ctx.reply(`🛍 Store\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot\n${shopUrl}`);
 }
 
+function toggleLanguage(ctx) {
+  const user = ensureUser(ctx.from);
+  user.language = user.language === 'ru' ? 'en' : 'ru';
+  saveDb();
+
+  return ctx.reply(user.language === 'ru' ? 'Язык изменен на русский.' : 'Language changed to English.', mainKeyboard());
+}
+
 async function sendReferralLink(ctx) {
   const user = ensureUser(ctx.from);
   const botInfo = await ctx.telegram.getMe();
@@ -291,15 +328,9 @@ bot.start(async (ctx) => {
   const payload = ctx.startPayload || '';
   const referrerId = payload.startsWith('ref_') ? payload.slice(4) : null;
 
-  if (referrerId && referrerId !== String(user.id) && !user.invitedBy && db.users[referrerId]) {
-    const referrer = db.users[referrerId];
-
-    user.invitedBy = Number(referrerId);
-    referrer.points += 1;
-    referrer.referrals.push(user.id);
+  if (referrerId && referrerId !== String(user.id) && !user.invitedBy && !user.pendingReferrerId && !user.referralRewarded && db.users[referrerId]) {
+    user.pendingReferrerId = Number(referrerId);
     saveDb();
-
-    await ctx.telegram.sendMessage(referrerId, `Новый реферал: ${user.name}. Начислен 1 балл.`).catch(() => null);
   }
 
   if (!(await requireSubscription(ctx))) {
@@ -320,6 +351,7 @@ bot.hears('📊 Progress', withSubscription(sendProgress));
 bot.hears('🛍 Store', withSubscription(sendShop));
 bot.hears('💬 Support', withSubscription(sendSupport));
 bot.hears('📣 Main Channel', withSubscription(sendMainChannel));
+bot.hears('🌍 Сменить язык', withSubscription(toggleLanguage));
 
 bot.hears('Моя ссылка', withSubscription(sendReferralLink));
 
@@ -344,9 +376,8 @@ bot.action('check_subscription', async (ctx) => {
     return;
   }
 
-  markSubscribed(ctx.from);
-  await ctx.answerCbQuery('Готово.').catch(() => null);
-  await ctx.reply('Спасибо за подписку! Теперь можно пользоваться ботом.', mainKeyboard());
+  await ctx.answerCbQuery('Подписка не найдена.').catch(() => null);
+  await ctx.reply('Сначала подпишись на канал, затем нажми "Я подписался" еще раз.', subscribeKeyboard());
 });
 
 bot.action(/^buy:(.+)$/, async (ctx) => {
