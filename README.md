@@ -81,6 +81,8 @@ MAIN_CHANNEL_USERNAME=@Omni_Key
 
 5. Подключи persistent disk с mount path `/var/data`, чтобы файл `db.json` не удалялся при перезапуске сервиса.
 
+Важно: если Render-сервис создан на Free без persistent disk, баллы и пользователи будут сбрасываться после redeploy, потому что обычная файловая система Render временная. Для постоянного хранения нужен Render Disk с `DATA_DIR=/var/data` или внешняя база данных.
+
 Локальную панель `npm run panel` на Render запускать не нужно: Web Service использует `src/server.js`, который запускает бота и HTTP health-check.
 
 ## Команды

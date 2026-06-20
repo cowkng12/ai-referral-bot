@@ -129,6 +129,7 @@ function ensureUser(from) {
       pendingReferrerId: null,
       referralRewarded: false,
       language: 'ru',
+      languageSelected: false,
       referrals: [],
       subscribed: false,
       createdAt: new Date().toISOString()
@@ -140,6 +141,7 @@ function ensureUser(from) {
     db.users[id].pendingReferrerId = db.users[id].pendingReferrerId || null;
     db.users[id].referralRewarded = Boolean(db.users[id].referralRewarded || db.users[id].invitedBy);
     db.users[id].language = db.users[id].language || 'ru';
+    db.users[id].languageSelected = Boolean(db.users[id].languageSelected);
     saveDb();
   }
 
@@ -154,6 +156,14 @@ function mainKeyboard() {
     ['📣 Main Channel'],
     ['🌍 Сменить язык']
   ]).resize();
+}
+
+function languageKeyboard() {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback('🇷🇺 Русский', 'lang:ru')],
+    [Markup.button.callback('🇬🇧 English', 'lang:en')],
+    [Markup.button.callback('🇨🇳 中文', 'lang:zh')]
+  ]);
 }
 
 function hasPurchased(user, serviceId) {
@@ -207,6 +217,12 @@ function subscribeKeyboard() {
   buttons.push([Markup.button.callback('✅ Я подписался', 'check_subscription')]);
 
   return Markup.inlineKeyboard(buttons);
+}
+
+function activationMessage() {
+  const shopLine = shopUrl ? `\n\nМагазин: ${shopUrl}` : '';
+
+  return `Подписка подтверждена.\n\nДля активации баланса пополните счет в нашем магазине минимум на $1. После пополнения баллы будут доступны для обмена на подписку.${shopLine}`;
 }
 
 async function isSubscribed(ctx) {
@@ -304,11 +320,7 @@ function sendShop(ctx) {
 }
 
 function toggleLanguage(ctx) {
-  const user = ensureUser(ctx.from);
-  user.language = user.language === 'ru' ? 'en' : 'ru';
-  saveDb();
-
-  return ctx.reply(user.language === 'ru' ? 'Язык изменен на русский.' : 'Language changed to English.', mainKeyboard());
+  return ctx.reply('Выберите язык / Choose language / 选择语言:', languageKeyboard());
 }
 
 async function sendReferralLink(ctx) {
@@ -355,6 +367,7 @@ function addPoints(ctx) {
     pendingReferrerId: null,
     referralRewarded: false,
     language: 'ru',
+    languageSelected: true,
     referrals: [],
     subscribed: false,
     createdAt: new Date().toISOString()
@@ -376,6 +389,10 @@ bot.start(async (ctx) => {
   if (isNewUser && referrerId && referrerId !== String(user.id) && !user.invitedBy && !user.pendingReferrerId && !user.referralRewarded && db.users[referrerId]) {
     user.pendingReferrerId = Number(referrerId);
     saveDb();
+  }
+
+  if (!user.languageSelected) {
+    return ctx.reply('Выберите язык / Choose language / 选择语言:', languageKeyboard());
   }
 
   if (!(await requireSubscription(ctx))) {
@@ -416,10 +433,25 @@ bot.command('store', withSubscription(sendShop));
 bot.command('admin', sendAdminHelp);
 bot.command('addpoints', addPoints);
 
+bot.action(/^lang:(ru|en|zh)$/, async (ctx) => {
+  const user = ensureUser(ctx.from);
+  user.language = ctx.match[1];
+  user.languageSelected = true;
+  saveDb();
+
+  await ctx.answerCbQuery('Готово.').catch(() => null);
+
+  if (!(await requireSubscription(ctx))) {
+    return;
+  }
+
+  return ctx.reply(activationMessage(), mainKeyboard());
+});
+
 bot.action('check_subscription', async (ctx) => {
   if (await isSubscribed(ctx)) {
     await ctx.answerCbQuery('Подписка подтверждена.').catch(() => null);
-    await ctx.reply('Спасибо за подписку! Теперь можно пользоваться ботом.', mainKeyboard());
+    await ctx.reply(activationMessage(), mainKeyboard());
     return;
   }
 
