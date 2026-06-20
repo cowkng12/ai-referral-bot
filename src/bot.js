@@ -323,6 +323,50 @@ async function notifyAdmins(message) {
   await Promise.allSettled(adminIds.map((adminId) => bot.telegram.sendMessage(adminId, message)));
 }
 
+function isAdmin(from) {
+  return adminIds.includes(from.id);
+}
+
+function sendAdminHelp(ctx) {
+  if (!isAdmin(ctx.from)) {
+    return ctx.reply('Команда доступна только администратору.');
+  }
+
+  return ctx.reply('Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю');
+}
+
+function addPoints(ctx) {
+  if (!isAdmin(ctx.from)) {
+    return ctx.reply('Команда доступна только администратору.');
+  }
+
+  const [, userId, amountValue] = ctx.message.text.trim().split(/\s+/);
+  const amount = Number(amountValue);
+
+  if (!/^\d+$/.test(userId || '') || !Number.isInteger(amount) || amount <= 0) {
+    return ctx.reply('Использование: /addpoints USER_ID AMOUNT');
+  }
+
+  const user = db.users[userId] || {
+    id: Number(userId),
+    name: userId,
+    points: 0,
+    invitedBy: null,
+    pendingReferrerId: null,
+    referralRewarded: false,
+    language: 'ru',
+    referrals: [],
+    subscribed: false,
+    createdAt: new Date().toISOString()
+  };
+
+  user.points += amount;
+  db.users[userId] = user;
+  saveDb();
+
+  return ctx.reply(`Начислено ${amount} балл. пользователю ${user.name}. Баланс: ${user.points} балл.`);
+}
+
 bot.start(async (ctx) => {
   const isNewUser = !db.users[String(ctx.from.id)];
   const user = ensureUser(ctx.from);
@@ -369,6 +413,8 @@ bot.command('shop', withSubscription(sendShop));
 bot.command('support', withSubscription(sendSupport));
 bot.command('channel', withSubscription(sendMainChannel));
 bot.command('store', withSubscription(sendShop));
+bot.command('admin', sendAdminHelp);
+bot.command('addpoints', addPoints);
 
 bot.action('check_subscription', async (ctx) => {
   if (await isSubscribed(ctx)) {
