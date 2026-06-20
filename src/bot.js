@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+const { createClient } = require('@supabase/supabase-js');
 const { Telegraf, Markup } = require('telegraf');
 
 const token = process.env.BOT_TOKEN;
@@ -21,6 +22,13 @@ const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
 
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const dbPath = path.join(dataDir, 'db.json');
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseStateTable = process.env.SUPABASE_STATE_TABLE || 'app_state';
+const supabaseStateKey = process.env.SUPABASE_STATE_KEY || 'bot';
+const supabase = supabaseUrl && supabaseServiceRoleKey
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, { auth: { persistSession: false } })
+  : null;
 
 const translations = {
   ru: {
@@ -248,28 +256,89 @@ const defaultDb = {
   ]
 };
 
-function loadDb() {
+function normalizeDb(nextDb) {
+  return {
+    users: nextDb?.users || {},
+    purchases: Array.isArray(nextDb?.purchases) ? nextDb.purchases : [],
+    services: defaultDb.services
+  };
+}
+
+function loadLocalDb() {
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
   if (!fs.existsSync(dbPath)) {
-    saveDb(defaultDb);
-    return structuredClone(defaultDb);
+    const nextDb = normalizeDb(defaultDb);
+    saveLocalDb(nextDb);
+    return nextDb;
   }
 
-  const nextDb = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-  nextDb.services = defaultDb.services;
-  saveDb(nextDb);
+  const nextDb = normalizeDb(JSON.parse(fs.readFileSync(dbPath, 'utf8')));
+  saveLocalDb(nextDb);
 
   return nextDb;
 }
 
-function saveDb(nextDb = db) {
+function saveLocalDb(nextDb) {
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+
   fs.writeFileSync(dbPath, JSON.stringify(nextDb, null, 2));
 }
 
-const db = loadDb();
+async function loadSupabaseDb() {
+  const { data, error } = await supabase
+    .from(supabaseStateTable)
+    .select('data')
+    .eq('key', supabaseStateKey)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  const nextDb = normalizeDb(data?.data || defaultDb);
+  await saveSupabaseDb(nextDb);
+
+  return nextDb;
+}
+
+async function saveSupabaseDb(nextDb) {
+  const { error } = await supabase
+    .from(supabaseStateTable)
+    .upsert({ key: supabaseStateKey, data: nextDb, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+
+  if (error) {
+    throw error;
+  }
+}
+
+async function loadDb() {
+  if (supabase) {
+    return loadSupabaseDb();
+  }
+
+  return loadLocalDb();
+}
+
+function saveDb(nextDb = db) {
+  const dbToSave = normalizeDb(nextDb);
+
+  if (!supabase) {
+    saveLocalDb(dbToSave);
+    return;
+  }
+
+  saveQueue = saveQueue.then(() => saveSupabaseDb(dbToSave)).catch((error) => {
+    console.error('Supabase save failed:', error.message);
+  });
+}
+
+let db;
+let saveQueue = Promise.resolve();
 const bot = new Telegraf(token);
 
 function getUserName(from) {
@@ -707,8 +776,16 @@ bot.catch((error) => {
   console.error('Bot error:', error);
 });
 
-bot.launch(() => {
-  console.log('AI referral bot is running.');
+async function main() {
+  db = await loadDb();
+  await bot.launch(() => {
+    console.log(`AI referral bot is running with ${supabase ? 'Supabase' : 'local JSON'} storage.`);
+  });
+}
+
+main().catch((error) => {
+  console.error('Bot startup failed:', error);
+  process.exit(1);
 });
 
 process.once('SIGINT', () => bot.stop('SIGINT'));

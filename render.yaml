@@ -13,8 +13,14 @@ services:
         sync: false
       - key: ADMIN_IDS
         sync: false
-      - key: DATA_DIR
-        value: /var/data
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STATE_TABLE
+        value: app_state
+      - key: SUPABASE_STATE_KEY
+        value: bot
       - key: SHOP_URL
         value: https://t.me/OminiKey_bot
       - key: SUPPORT_URL
@@ -23,7 +29,3 @@ services:
         value: https://t.me/Omni_Key
       - key: MAIN_CHANNEL_USERNAME
         value: '@Omni_Key'
-    disks:
-      - name: bot-data
-        mountPath: /var/data
-        sizeGB: 1

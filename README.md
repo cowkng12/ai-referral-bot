@@ -12,7 +12,7 @@ Telegram-бот для реферальной системы: пользоват
 - Магазин ИИ-сервисов с покупкой за баллы.
 - Главное меню в стиле `Profile`, `Redeem`, `My Link`, `Progress`, `Store`, `Support`, `Main Channel`.
 - Уведомление администраторов о новых покупках.
-- Простое JSON-хранилище в `data/db.json`.
+- Постоянное хранилище в Supabase на Render и локальный JSON fallback в `data/db.json`.
 
 ## Запуск
 
@@ -39,6 +39,7 @@ ADMIN_IDS=123456789
 `SUPPORT_URL` - ссылка на поддержку `@OmniKeySUPPORT`.
 `MAIN_CHANNEL_URL` - ссылка на основной канал.
 `MAIN_CHANNEL_USERNAME` - username канала для проверки подписки. Чтобы проверка работала стабильно, добавь бота администратором в канал.
+`SUPABASE_URL` и `SUPABASE_SERVICE_ROLE_KEY` включают постоянное хранилище Supabase. Если они не заданы, бот локально использует `data/db.json`.
 
 4. Запусти бота:
 
@@ -67,21 +68,34 @@ npm install
 npm run render:start
 ```
 
-4. Добавь переменные окружения:
+4. В Supabase создай таблицу для состояния бота через SQL Editor:
+
+```sql
+create table if not exists public.app_state (
+  key text primary key,
+  data jsonb not null,
+  updated_at timestamptz not null default now()
+);
+```
+
+5. Добавь переменные окружения в Render:
 
 ```env
 BOT_TOKEN=your_telegram_bot_token
 ADMIN_IDS=123456789
-DATA_DIR=/var/data
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+SUPABASE_STATE_TABLE=app_state
+SUPABASE_STATE_KEY=bot
 SHOP_URL=https://t.me/OminiKey_bot
 SUPPORT_URL=https://t.me/OmniKeySUPPORT
 MAIN_CHANNEL_URL=https://t.me/Omni_Key
 MAIN_CHANNEL_USERNAME=@Omni_Key
 ```
 
-5. Подключи persistent disk с mount path `/var/data`, чтобы файл `db.json` не удалялся при перезапуске сервиса.
+`SUPABASE_SERVICE_ROLE_KEY` бери в Supabase: Project Settings -> API -> service_role key. Не публикуй этот ключ в коде или README.
 
-Важно: если Render-сервис создан на Free без persistent disk, баллы и пользователи будут сбрасываться после redeploy, потому что обычная файловая система Render временная. Для постоянного хранения нужен Render Disk с `DATA_DIR=/var/data` или внешняя база данных.
+Render Disk больше не нужен: пользователи, баллы и покупки сохраняются в Supabase.
 
 Локальную панель `npm run panel` на Render запускать не нужно: Web Service использует `src/server.js`, который запускает бота и HTTP health-check.
 
