@@ -51,7 +51,8 @@ const translations = {
     redeemText: ({ services }) => `🎁 Обмен\n\nВыбери сервис для обмена баллов:\n\n${services}`,
     supportText: '💬 Поддержка\n\nПо всем вопросам рекомендуем обращаться в поддержку: @OmniKeySUPPORT',
     channelText: ({ url }) => (url ? `📣 Основной канал: ${url}` : '📣 Основной канал пока не настроен.'),
-    storeText: ({ url }) => `🛍 Магазин\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot\n${url}`,
+    storeText: () => '🛍 Магазин\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot',
+    openStoreButton: 'Открыть магазин',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 Моя ссылка\n\n${link}\n\nЗа каждого нового приглашенного ты получаешь 1 балл.`,
     adminOnly: 'Команда доступна только администратору.',
@@ -103,7 +104,8 @@ const translations = {
     redeemText: ({ services }) => `🎁 Redeem\n\nChoose a service to exchange points:\n\n${services}`,
     supportText: '💬 Support\n\nFor any questions, contact support: @OmniKeySUPPORT',
     channelText: ({ url }) => (url ? `📣 Main Channel: ${url}` : '📣 Main Channel is not configured yet.'),
-    storeText: ({ url }) => `🛍 Store\n\nOur AI services store: @OminiKey_bot\n${url}`,
+    storeText: () => '🛍 Store\n\nOur AI services store: @OminiKey_bot',
+    openStoreButton: 'Open store',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 My Link\n\n${link}\n\nYou get 1 point for each new invited user.`,
     adminOnly: 'This command is available only to administrators.',
@@ -155,7 +157,8 @@ const translations = {
     redeemText: ({ services }) => `🎁 兑换\n\n选择要兑换的服务：\n\n${services}`,
     supportText: '💬 支持\n\n如有问题，请联系支持：@OmniKeySUPPORT',
     channelText: ({ url }) => (url ? `📣 主频道：${url}` : '📣 主频道尚未配置。'),
-    storeText: ({ url }) => `🛍 商店\n\n我们的 AI 服务商店：@OminiKey_bot\n${url}`,
+    storeText: () => '🛍 商店\n\n我们的 AI 服务商店：@OminiKey_bot',
+    openStoreButton: '打开商店',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 我的链接\n\n${link}\n\n每邀请一个新用户，你将获得 1 积分。`,
     adminOnly: '此命令仅管理员可用。',
@@ -569,7 +572,12 @@ function sendMainChannel(ctx) {
 
 function sendShop(ctx) {
   const user = ensureUser(ctx.from);
-  return ctx.reply(getUserTranslation(user).storeText({ url: getShopUrl(user) }));
+  const text = getUserTranslation(user);
+
+  return ctx.reply(
+    text.storeText(),
+    Markup.inlineKeyboard([[Markup.button.url(text.openStoreButton, getShopUrl(user))]])
+  );
 }
 
 function toggleLanguage(ctx) {
