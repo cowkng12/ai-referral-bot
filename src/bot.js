@@ -19,6 +19,12 @@ const shopUrl = process.env.SHOP_URL || 'https://t.me/OminiKey_bot';
 const supportUrl = process.env.SUPPORT_URL || '';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
+const moscowDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Moscow',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+});
 
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const dbPath = path.join(dataDir, 'db.json');
@@ -65,7 +71,7 @@ const translations = {
     subscriptionMissing: 'Подписка не найдена.',
     subscribeAgain: 'Сначала подпишись на канал, затем нажми "Я подписался" еще раз.',
     serviceMissing: 'Сервис не найден.',
-    purchaseLimitReached: 'Вы уже получили товар. В реферальном боте доступна только 1 выдача товара на пользователя.',
+    purchaseLimitReached: 'Сегодня вы уже получили товар. В реферальном боте доступна 1 выдача товара в сутки по МСК.',
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
@@ -119,7 +125,7 @@ const translations = {
     subscriptionMissing: 'Subscription not found.',
     subscribeAgain: 'Subscribe to the channel first, then tap "I subscribed" again.',
     serviceMissing: 'Service not found.',
-    purchaseLimitReached: 'You have already received a product. The referral bot allows only 1 product delivery per user.',
+    purchaseLimitReached: 'You have already received a product today. The referral bot allows 1 product delivery per day by Moscow time.',
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
@@ -173,7 +179,7 @@ const translations = {
     subscriptionMissing: '未找到订阅。',
     subscribeAgain: '请先订阅频道，然后再次点击“我已订阅”。',
     serviceMissing: '未找到服务。',
-    purchaseLimitReached: '你已经领取过商品。推荐机器人每位用户只能领取 1 个商品。',
+    purchaseLimitReached: '你今天已经领取过商品。推荐机器人按莫斯科时间每天只能领取 1 个商品。',
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
@@ -383,6 +389,7 @@ function ensureUser(from) {
       languageSelected: false,
       referrals: [],
       subscribed: false,
+      dailyPurchaseDate: null,
       createdAt: new Date().toISOString()
     };
     saveDb();
@@ -393,6 +400,7 @@ function ensureUser(from) {
     db.users[id].referralRewarded = Boolean(db.users[id].referralRewarded || db.users[id].invitedBy);
     db.users[id].language = db.users[id].language || 'ru';
     db.users[id].languageSelected = Boolean(db.users[id].languageSelected);
+    db.users[id].dailyPurchaseDate = db.users[id].dailyPurchaseDate || null;
     saveDb();
   }
 
@@ -423,8 +431,12 @@ function hasPurchased(user, serviceId) {
   return db.purchases.some((purchase) => purchase.userId === user.id && purchase.serviceId === serviceId);
 }
 
-function hasAnyPurchase(user) {
-  return db.purchases.some((purchase) => purchase.userId === user.id);
+function getMoscowDateKey(date = new Date()) {
+  return moscowDateFormatter.format(date);
+}
+
+function hasPurchasedToday(user) {
+  return user.dailyPurchaseDate === getMoscowDateKey();
 }
 
 function getServiceIcon(user, service) {
@@ -643,6 +655,7 @@ function addPoints(ctx) {
     languageSelected: true,
     referrals: [],
     subscribed: false,
+    dailyPurchaseDate: null,
     createdAt: new Date().toISOString()
   };
 
@@ -768,7 +781,7 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
     return;
   }
 
-  if (hasAnyPurchase(user)) {
+  if (hasPurchasedToday(user)) {
     await ctx.answerCbQuery(text.purchaseLimitReached).catch(() => null);
     await ctx.reply(text.purchaseLimitReached);
     return;
@@ -781,6 +794,7 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   }
 
   user.points -= service.price;
+  user.dailyPurchaseDate = getMoscowDateKey();
   const purchase = {
     id: db.purchases.length + 1,
     userId: user.id,
