@@ -67,6 +67,7 @@ const translations = {
     serviceMissing: 'Сервис не найден.',
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
+    dailyPurchaseLimit: 'Сегодня вы уже покупали товар. Следующая покупка будет доступна завтра.',
     purchaseCreated: 'Покупка создана.',
     purchaseText: ({ title, points, shopUrl }) => `Поздравляем с покупкой: ${title}. Остаток: ${points} балл.\n\nЧтобы получить данные от товара, пополните баланс нашего магазина на $0.1.\nПерейдите в магазин по персональной ссылке: ${shopUrl}\n\nЭто поможет подтвердить, что вы не бот, и в следующие разы получать товары без задержек.`,
     adminPurchase: ({ id, name, userId, title, price }) => `Новая покупка #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
@@ -120,6 +121,7 @@ const translations = {
     serviceMissing: 'Service not found.',
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
+    dailyPurchaseLimit: 'You already bought one product today. The next purchase will be available tomorrow.',
     purchaseCreated: 'Purchase created.',
     purchaseText: ({ title, points, shopUrl }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nTo receive the product details, top up our store balance with $0.1.\nOpen the store with your personal link: ${shopUrl}\n\nThis helps us confirm you are not a bot, so next time you can receive products without delays.`,
     adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
@@ -173,6 +175,7 @@ const translations = {
     serviceMissing: '未找到服务。',
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
+    dailyPurchaseLimit: '你今天已经购买过一个商品。下一次购买将在明天开放。',
     purchaseCreated: '购买已创建。',
     purchaseText: ({ title, points, shopUrl }) => `恭喜购买：${title}。剩余余额：${points} 积分。\n\n要获取商品信息，请在我们的商店充值 $0.1。\n请通过你的专属链接打开商店：${shopUrl}\n\n这有助于确认你不是机器人，以后可以更快收到商品。`,
     adminPurchase: ({ id, name, userId, title, price }) => `新购买 #${id}\n用户：${name} (${userId})\n服务：${title}\n价格：${price}`,
@@ -418,6 +421,15 @@ function languageKeyboard() {
 
 function hasPurchased(user, serviceId) {
   return db.purchases.some((purchase) => purchase.userId === user.id && purchase.serviceId === serviceId);
+}
+
+function hasPurchasedToday(user) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  return db.purchases.some((purchase) => (
+    purchase.userId === user.id
+    && String(purchase.createdAt || '').slice(0, 10) === today
+  ));
 }
 
 function getServiceIcon(user, service) {
@@ -764,6 +776,12 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   if (user.points < service.price) {
     await ctx.answerCbQuery(text.notEnoughPoints).catch(() => null);
     await ctx.reply(text.notEnoughPointsText({ price: service.price, points: user.points }));
+    return;
+  }
+
+  if (hasPurchasedToday(user)) {
+    await ctx.answerCbQuery(text.dailyPurchaseLimit).catch(() => null);
+    await ctx.reply(text.dailyPurchaseLimit);
     return;
   }
 
