@@ -65,6 +65,7 @@ const translations = {
     subscriptionMissing: 'Подписка не найдена.',
     subscribeAgain: 'Сначала подпишись на канал, затем нажми "Я подписался" еще раз.',
     serviceMissing: 'Сервис не найден.',
+    purchaseLimitReached: 'Вы уже получили товар. В реферальном боте доступна только 1 выдача товара на пользователя.',
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
@@ -118,6 +119,7 @@ const translations = {
     subscriptionMissing: 'Subscription not found.',
     subscribeAgain: 'Subscribe to the channel first, then tap "I subscribed" again.',
     serviceMissing: 'Service not found.',
+    purchaseLimitReached: 'You have already received a product. The referral bot allows only 1 product delivery per user.',
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
@@ -171,6 +173,7 @@ const translations = {
     subscriptionMissing: '未找到订阅。',
     subscribeAgain: '请先订阅频道，然后再次点击“我已订阅”。',
     serviceMissing: '未找到服务。',
+    purchaseLimitReached: '你已经领取过商品。推荐机器人每位用户只能领取 1 个商品。',
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
@@ -418,6 +421,10 @@ function languageKeyboard() {
 
 function hasPurchased(user, serviceId) {
   return db.purchases.some((purchase) => purchase.userId === user.id && purchase.serviceId === serviceId);
+}
+
+function hasAnyPurchase(user) {
+  return db.purchases.some((purchase) => purchase.userId === user.id);
 }
 
 function getServiceIcon(user, service) {
@@ -758,6 +765,12 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
 
   if (!service) {
     await ctx.answerCbQuery(text.serviceMissing).catch(() => null);
+    return;
+  }
+
+  if (hasAnyPurchase(user)) {
+    await ctx.answerCbQuery(text.purchaseLimitReached).catch(() => null);
+    await ctx.reply(text.purchaseLimitReached);
     return;
   }
 
