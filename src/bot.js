@@ -21,7 +21,7 @@ const supportUrl = process.env.SUPPORT_URL || '';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
 const purchaseLimitPerService = 3;
-const purchaseDeliveryDelayMs = 10 * 60 * 1000;
+const purchaseDeliveryDelayMs = 5 * 60 * 1000;
 const moscowDateFormatter = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Moscow',
   year: 'numeric',
@@ -77,8 +77,8 @@ const translations = {
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
-    purchaseText: 'Спасибо за покупку, ожидайте в течении часа, вам придут данные!',
-    adminPurchaseQueued: ({ id, name, userId, title, price }) => `Покупка #${id} создана. Выдача данных запланирована через 10 минут.\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
+    purchaseText: 'Спасибо за покупку, ожидайте в течении 5 минут, вам придут данные!',
+    adminPurchaseQueued: ({ id, name, userId, title, price }) => `Покупка #${id} создана. Выдача данных запланирована через 5 минут.\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
     adminPurchaseDelivery: ({ id, name, userId, title, price }) => `Пора выдать данные по покупке #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
     adminPurchase: ({ id, name, userId, title, price }) => `Новая покупка #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
     help: 'Команды: /start, /balance, /link, /shop. Пригласи друга по ссылке и получи 1 балл после его первого запуска бота.',
@@ -133,7 +133,7 @@ const translations = {
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
-    purchaseText: 'Thank you for your purchase, please wait within an hour and you will receive the details!',
+    purchaseText: 'Thank you for your purchase, please wait within 5 minutes and you will receive the details!',
     adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
     help: 'Commands: /start, /balance, /link, /shop. Invite a friend with your link and get 1 point after their first bot launch.',
     services: {
@@ -187,7 +187,7 @@ const translations = {
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
-    purchaseText: '感谢购买，请在一小时内等待，你将收到商品数据！',
+    purchaseText: '感谢购买，请等待 5 分钟内，你将收到商品数据！',
     adminPurchase: ({ id, name, userId, title, price }) => `新购买 #${id}\n用户：${name} (${userId})\n服务：${title}\n价格：${price}`,
     help: '命令：/start, /balance, /link, /shop。通过链接邀请好友，在他们首次启动机器人后获得 1 积分。',
     services: {
