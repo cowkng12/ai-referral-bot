@@ -19,6 +19,13 @@ const shopUrl = process.env.SHOP_URL || 'https://t.me/OminiKey_bot';
 const supportUrl = process.env.SUPPORT_URL || '';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
+const purchaseLimitPerService = 3;
+const moscowDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Moscow',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+});
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const dbPath = path.join(dataDir, 'db.json');
 const supabaseUrl = process.env.SUPABASE_URL || '';
@@ -64,7 +71,7 @@ const translations = {
     subscriptionMissing: 'Подписка не найдена.',
     subscribeAgain: 'Сначала подпишись на канал, затем нажми "Я подписался" еще раз.',
     serviceMissing: 'Сервис не найден.',
-    purchaseLimitReached: 'Сегодня вы уже получили товар. Обновление товаров происходит раз в сутки.',
+    purchaseLimitReached: 'Сегодня вы уже купили этот товар 3 раза. Выберите другой товар или попробуйте завтра.',
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
@@ -118,7 +125,7 @@ const translations = {
     subscriptionMissing: 'Subscription not found.',
     subscribeAgain: 'Subscribe to the channel first, then tap "I subscribed" again.',
     serviceMissing: 'Service not found.',
-    purchaseLimitReached: 'You have already received a product today. Products refresh once per day.',
+    purchaseLimitReached: 'You have already bought this product 3 times today. Choose another product or try again tomorrow.',
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
@@ -172,7 +179,7 @@ const translations = {
     subscriptionMissing: '未找到订阅。',
     subscribeAgain: '请先订阅频道，然后再次点击“我已订阅”。',
     serviceMissing: '未找到服务。',
-    purchaseLimitReached: '你今天已经领取过商品。商品每天更新一次。',
+    purchaseLimitReached: '你今天已经购买该商品 3 次。请选择其他商品或明天再试。',
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
@@ -422,6 +429,20 @@ function languageKeyboard() {
 
 function hasPurchased(user, serviceId) {
   return db.purchases.some((purchase) => purchase.userId === user.id && purchase.serviceId === serviceId);
+}
+
+function getMoscowDateKey(date = new Date()) {
+  return moscowDateFormatter.format(date);
+}
+
+function getDailyServicePurchaseCount(user, serviceId) {
+  const today = getMoscowDateKey();
+
+  return db.purchases.filter((purchase) => (
+    purchase.userId === user.id
+    && purchase.serviceId === serviceId
+    && getMoscowDateKey(new Date(purchase.createdAt)) === today
+  )).length;
 }
 
 function getServiceIcon(user, service) {
@@ -763,6 +784,12 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
 
   if (!service) {
     await ctx.answerCbQuery(text.serviceMissing).catch(() => null);
+    return;
+  }
+
+  if (getDailyServicePurchaseCount(user, service.id) >= purchaseLimitPerService) {
+    await ctx.answerCbQuery(text.purchaseLimitReached).catch(() => null);
+    await ctx.reply(text.purchaseLimitReached);
     return;
   }
 
