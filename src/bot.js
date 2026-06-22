@@ -16,6 +16,7 @@ const adminIds = (process.env.ADMIN_IDS || '')
   .map((id) => Number(id.trim()))
   .filter(Boolean);
 const shopUrl = process.env.SHOP_URL || 'https://t.me/OminiKey_bot';
+const shopWebAppUrl = process.env.SHOP_WEB_APP_URL || 'https://omini-key-miniapp.onrender.com';
 const supportUrl = process.env.SUPPORT_URL || '';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
@@ -824,9 +825,15 @@ bot.catch((error) => {
 
 async function main() {
   db = await loadDb();
-  await bot.launch(() => {
-    console.log(`AI referral bot is running with ${supabase ? 'Supabase' : 'local JSON'} storage.`);
+  await bot.launch();
+  await bot.telegram.setChatMenuButton({
+    menu_button: {
+      type: 'web_app',
+      text: 'Open',
+      web_app: { url: shopWebAppUrl }
+    }
   });
+  console.log(`AI referral bot is running with ${supabase ? 'Supabase' : 'local JSON'} storage.`);
 }
 
 main().catch((error) => {
