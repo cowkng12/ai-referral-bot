@@ -19,13 +19,6 @@ const shopUrl = process.env.SHOP_URL || 'https://t.me/OminiKey_bot';
 const supportUrl = process.env.SUPPORT_URL || '';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
-const moscowDateFormatter = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'Europe/Moscow',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit'
-});
-
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const dbPath = path.join(dataDir, 'db.json');
 const supabaseUrl = process.env.SUPABASE_URL || '';
@@ -431,14 +424,6 @@ function hasPurchased(user, serviceId) {
   return db.purchases.some((purchase) => purchase.userId === user.id && purchase.serviceId === serviceId);
 }
 
-function getMoscowDateKey(date = new Date()) {
-  return moscowDateFormatter.format(date);
-}
-
-function hasPurchasedToday(user) {
-  return user.dailyPurchaseDate === getMoscowDateKey();
-}
-
 function getServiceIcon(user, service) {
   return hasPurchased(user, service.id) ? '🔑' : '🔒';
 }
@@ -781,12 +766,6 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
     return;
   }
 
-  if (hasPurchasedToday(user)) {
-    await ctx.answerCbQuery(text.purchaseLimitReached).catch(() => null);
-    await ctx.reply(text.purchaseLimitReached);
-    return;
-  }
-
   if (user.points < service.price) {
     await ctx.answerCbQuery(text.notEnoughPoints).catch(() => null);
     await ctx.reply(text.notEnoughPointsText({ price: service.price, points: user.points }));
@@ -794,7 +773,6 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   }
 
   user.points -= service.price;
-  user.dailyPurchaseDate = getMoscowDateKey();
   const purchase = {
     id: db.purchases.length + 1,
     userId: user.id,
