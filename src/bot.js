@@ -371,6 +371,10 @@ function getUserName(from) {
   return from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ') || String(from.id);
 }
 
+function getPublicDisplayName(user) {
+  return String(user.name || user.id).replace(/^@/, '');
+}
+
 function getShopUrl(user) {
   const separator = shopUrl.includes('?') ? '&' : '?';
   return `${shopUrl}${separator}start=refbot_${user.id}`;
@@ -599,7 +603,7 @@ function sendLeaderboard(ctx) {
     .filter((item) => item.referrals.length > 0)
     .sort((first, second) => second.referrals.length - first.referrals.length)
     .slice(0, 10)
-    .map((item, index) => `${index + 1}. ${item.name} — ${item.referrals.length}`)
+    .map((item, index) => `${index + 1}. ${getPublicDisplayName(item)} — ${item.referrals.length}`)
     .join('\n') || text.leaderboardEmpty;
 
   return ctx.reply(text.leaderboardText({ referrals: user.referrals.length, leaders }));
