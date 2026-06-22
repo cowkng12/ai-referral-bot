@@ -43,6 +43,7 @@ const translations = {
     redeem: '🎁 Обмен',
     myLink: '🔗 Моя ссылка',
     progress: '📊 Прогресс',
+    leaderboard: '🏆 Топ',
     store: '🛍 Магазин',
     support: '💬 Поддержка',
     mainChannel: '📣 Основной канал',
@@ -55,8 +56,11 @@ const translations = {
     balance: ({ points, referrals }) => `Баланс: ${points} балл.\nРефералов: ${referrals}.`,
     profileText: ({ name, id, points, referrals }) => `👤 Профиль\n\nПользователь: ${name}\nID: ${id}\nБаланс: ${points} балл.\nРефералов: ${referrals}`,
     progressText: ({ points, referrals }) => `📊 Прогресс\n\nБаллы: ${points}\nПриглашено друзей: ${referrals}`,
+    leaderboardText: ({ referrals, leaders }) => `🏆 Топ реферальщиков\n\nТы пригласил: ${referrals}\n\n${leaders}`,
+    leaderboardEmpty: 'Пока нет приглашенных пользователей.',
     redeemText: ({ services }) => `🎁 Обмен\n\nВыбери сервис для обмена баллов:\n\n${services}`,
-    supportText: '💬 Поддержка\n\nПо всем вопросам рекомендуем обращаться в поддержку: @OmniKeySUPPORT',
+    supportText: '💬 Поддержка\n\nНапишите ваш вопрос или проблему следующим сообщением. Мы передадим обращение оператору.',
+    supportReceived: 'Спасибо. Ваше обращение отправлено в поддержку.',
     channelText: ({ url }) => (url ? `📣 Основной канал: ${url}` : '📣 Основной канал пока не настроен.'),
     storeText: () => '🛍 Магазин\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot',
     openStoreButton: 'Открыть магазин',
@@ -97,6 +101,7 @@ const translations = {
     redeem: '🎁 Redeem',
     myLink: '🔗 My Link',
     progress: '📊 Progress',
+    leaderboard: '🏆 Top',
     store: '🛍 Store',
     support: '💬 Support',
     mainChannel: '📣 Main Channel',
@@ -109,8 +114,11 @@ const translations = {
     balance: ({ points, referrals }) => `Balance: ${points} pts.\nReferrals: ${referrals}.`,
     profileText: ({ name, id, points, referrals }) => `👤 Profile\n\nUser: ${name}\nID: ${id}\nBalance: ${points} pts.\nReferrals: ${referrals}`,
     progressText: ({ points, referrals }) => `📊 Progress\n\nPoints: ${points}\nFriends invited: ${referrals}`,
+    leaderboardText: ({ referrals, leaders }) => `🏆 Referral leaderboard\n\nYou invited: ${referrals}\n\n${leaders}`,
+    leaderboardEmpty: 'No invited users yet.',
     redeemText: ({ services }) => `🎁 Redeem\n\nChoose a service to exchange points:\n\n${services}`,
-    supportText: '💬 Support\n\nFor any questions, contact support: @OmniKeySUPPORT',
+    supportText: '💬 Support\n\nSend your question or problem in the next message. We will forward it to an operator.',
+    supportReceived: 'Thank you. Your request has been sent to support.',
     channelText: ({ url }) => (url ? `📣 Main Channel: ${url}` : '📣 Main Channel is not configured yet.'),
     storeText: () => '🛍 Store\n\nOur AI services store: @OminiKey_bot',
     openStoreButton: 'Open store',
@@ -151,6 +159,7 @@ const translations = {
     redeem: '🎁 兑换',
     myLink: '🔗 我的链接',
     progress: '📊 进度',
+    leaderboard: '🏆 排行榜',
     store: '🛍 商店',
     support: '💬 支持',
     mainChannel: '📣 主频道',
@@ -163,8 +172,11 @@ const translations = {
     balance: ({ points, referrals }) => `余额：${points} 积分。\n推荐人数：${referrals}。`,
     profileText: ({ name, id, points, referrals }) => `👤 个人资料\n\n用户：${name}\nID：${id}\n余额：${points} 积分。\n推荐人数：${referrals}`,
     progressText: ({ points, referrals }) => `📊 进度\n\n积分：${points}\n已邀请好友：${referrals}`,
+    leaderboardText: ({ referrals, leaders }) => `🏆 推荐排行榜\n\n你已邀请：${referrals}\n\n${leaders}`,
+    leaderboardEmpty: '目前还没有邀请用户。',
     redeemText: ({ services }) => `🎁 兑换\n\n选择要兑换的服务：\n\n${services}`,
-    supportText: '💬 支持\n\n如有问题，请联系支持：@OmniKeySUPPORT',
+    supportText: '💬 支持\n\n请在下一条消息中发送你的问题。我们会转交给客服。',
+    supportReceived: '谢谢。你的请求已发送给支持团队。',
     channelText: ({ url }) => (url ? `📣 主频道：${url}` : '📣 主频道尚未配置。'),
     storeText: () => '🛍 商店\n\n我们的 AI 服务商店：@OminiKey_bot',
     openStoreButton: '打开商店',
@@ -353,6 +365,7 @@ function saveDb(nextDb = db) {
 let db;
 let saveQueue = Promise.resolve();
 const bot = new Telegraf(token);
+const pendingSupportUsers = new Set();
 
 function getUserName(from) {
   return from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ') || String(from.id);
@@ -414,6 +427,7 @@ function mainKeyboard(user) {
   return Markup.keyboard([
     [text.profile, text.redeem],
     [text.myLink, text.progress],
+    [text.leaderboard],
     [text.store, text.support],
     [text.mainChannel],
     [text.changeLanguage]
@@ -578,6 +592,19 @@ function sendProgress(ctx) {
   return ctx.reply(text.progressText({ points: user.points, referrals: user.referrals.length }));
 }
 
+function sendLeaderboard(ctx) {
+  const user = ensureUser(ctx.from);
+  const text = getUserTranslation(user);
+  const leaders = Object.values(db.users)
+    .filter((item) => item.referrals.length > 0)
+    .sort((first, second) => second.referrals.length - first.referrals.length)
+    .slice(0, 10)
+    .map((item, index) => `${index + 1}. ${item.name} — ${item.referrals.length}`)
+    .join('\n') || text.leaderboardEmpty;
+
+  return ctx.reply(text.leaderboardText({ referrals: user.referrals.length, leaders }));
+}
+
 function sendRedeem(ctx) {
   const user = ensureUser(ctx.from);
   const text = getUserTranslation(user);
@@ -589,6 +616,7 @@ function sendRedeem(ctx) {
 }
 
 function sendSupport(ctx) {
+  pendingSupportUsers.add(ctx.from.id);
   return ctx.reply(getCtxTranslation(ctx).supportText);
 }
 
@@ -621,6 +649,17 @@ async function sendReferralLink(ctx) {
 
 async function notifyAdmins(message) {
   await Promise.allSettled(adminIds.map((adminId) => bot.telegram.sendMessage(adminId, message)));
+}
+
+async function forwardSupportRequest(ctx, source) {
+  const from = ctx.from;
+  await notifyAdmins([
+    `Новое обращение в поддержку ${source}`,
+    `Пользователь: ${from.username ? `@${from.username}` : getUserName(from)}`,
+    `ID: ${from.id}`,
+    '',
+    ctx.message.text
+  ].join('\n'));
 }
 
 function isAdmin(from) {
@@ -713,6 +752,9 @@ bot.hears('🔗 我的链接', withSubscription(sendReferralLink));
 bot.hears('📊 Прогресс', withSubscription(sendProgress));
 bot.hears('📊 Progress', withSubscription(sendProgress));
 bot.hears('📊 进度', withSubscription(sendProgress));
+bot.hears('🏆 Топ', withSubscription(sendLeaderboard));
+bot.hears('🏆 Top', withSubscription(sendLeaderboard));
+bot.hears('🏆 排行榜', withSubscription(sendLeaderboard));
 bot.hears('🛍 Магазин', withSubscription(sendShop));
 bot.hears('🛍 Store', withSubscription(sendShop));
 bot.hears('🛍 商店', withSubscription(sendShop));
@@ -736,6 +778,8 @@ bot.command('balance', withSubscription(sendBalance));
 bot.command('profile', withSubscription(sendProfile));
 bot.command('link', withSubscription(sendReferralLink));
 bot.command('progress', withSubscription(sendProgress));
+bot.command('top', withSubscription(sendLeaderboard));
+bot.command('leaderboard', withSubscription(sendLeaderboard));
 bot.command('redeem', withSubscription(sendRedeem));
 bot.command('shop', withSubscription(sendShop));
 bot.command('support', withSubscription(sendSupport));
@@ -743,6 +787,16 @@ bot.command('channel', withSubscription(sendMainChannel));
 bot.command('store', withSubscription(sendShop));
 bot.command('admin', sendAdminHelp);
 bot.command('addpoints', addPoints);
+
+bot.on('text', async (ctx, next) => {
+  if (ctx.message.text.startsWith('/') || !pendingSupportUsers.has(ctx.from.id)) {
+    return next();
+  }
+
+  pendingSupportUsers.delete(ctx.from.id);
+  await forwardSupportRequest(ctx, 'OmniRef Bot');
+  await ctx.reply(getCtxTranslation(ctx).supportReceived);
+});
 
 bot.action(/^lang:(ru|en|zh)$/, async (ctx) => {
   const user = ensureUser(ctx.from);
