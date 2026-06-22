@@ -21,7 +21,6 @@ const supportUrl = process.env.SUPPORT_URL || '';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
 const purchaseLimitPerService = 3;
-const purchaseDeliveryDelayMs = 5 * 60 * 1000;
 const moscowDateFormatter = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Moscow',
   year: 'numeric',
@@ -77,9 +76,7 @@ const translations = {
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
-    purchaseText: 'Спасибо за покупку, ожидайте в течении 5 минут, вам придут данные!',
-    adminPurchaseQueued: ({ id, name, userId, title, price }) => `Покупка #${id} создана. Выдача данных запланирована через 5 минут.\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
-    adminPurchaseDelivery: ({ id, name, userId, title, price }) => `Пора выдать данные по покупке #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
+    purchaseText: ({ title, points, shopUrl }) => `Поздравляем с покупкой: ${title}. Остаток: ${points} балл.\n\nЧтобы получить данные от товара, пополните баланс нашего магазина на $1.\nПерейдите в магазин по персональной ссылке: ${shopUrl}\n\nЭто поможет подтвердить, что вы не бот, и в следующие разы получать товары без задержек.`,
     adminPurchase: ({ id, name, userId, title, price }) => `Новая покупка #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
     help: 'Команды: /start, /balance, /link, /shop. Пригласи друга по ссылке и получи 1 балл после его первого запуска бота.',
     services: {
@@ -133,7 +130,7 @@ const translations = {
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
-    purchaseText: 'Thank you for your purchase, please wait within 5 minutes and you will receive the details!',
+    purchaseText: ({ title, points, shopUrl }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nTo receive the product details, top up our store balance with $1.\nOpen the store with your personal link: ${shopUrl}\n\nThis helps us confirm you are not a bot, so next time you can receive products without delays.`,
     adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
     help: 'Commands: /start, /balance, /link, /shop. Invite a friend with your link and get 1 point after their first bot launch.',
     services: {
@@ -187,7 +184,7 @@ const translations = {
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
-    purchaseText: '感谢购买，请等待 5 分钟内，你将收到商品数据！',
+    purchaseText: ({ title, points, shopUrl }) => `恭喜购买：${title}。剩余余额：${points} 积分。\n\n要获取商品信息，请在我们的商店充值 $1。\n请通过你的专属链接打开商店：${shopUrl}\n\n这有助于确认你不是机器人，以后可以更快收到商品。`,
     adminPurchase: ({ id, name, userId, title, price }) => `新购买 #${id}\n用户：${name} (${userId})\n服务：${title}\n价格：${price}`,
     help: '命令：/start, /balance, /link, /shop。通过链接邀请好友，在他们首次启动机器人后获得 1 积分。',
     services: {
@@ -626,20 +623,6 @@ async function notifyAdmins(message) {
   await Promise.allSettled(adminIds.map((adminId) => bot.telegram.sendMessage(adminId, message)));
 }
 
-function schedulePurchaseDelivery(purchase) {
-  setTimeout(() => {
-    notifyAdmins(translations.ru.adminPurchaseDelivery({
-      id: purchase.id,
-      name: purchase.userName,
-      userId: purchase.userId,
-      title: purchase.serviceTitle,
-      price: purchase.price
-    })).catch((error) => {
-      console.error('Delayed purchase delivery notification failed:', error.message);
-    });
-  }, purchaseDeliveryDelayMs).unref?.();
-}
-
 function isAdmin(from) {
   return adminIds.includes(from.id);
 }
@@ -832,9 +815,8 @@ bot.action(/^buy:(.+)$/, async (ctx) => {
   saveDb();
 
   await ctx.answerCbQuery(text.purchaseCreated).catch(() => null);
-  await ctx.reply(text.purchaseText);
-  await notifyAdmins(translations.ru.adminPurchaseQueued({ id: purchase.id, name: user.name, userId: user.id, title: service.title, price: service.price }));
-  schedulePurchaseDelivery(purchase);
+  await ctx.reply(text.purchaseText({ title: service.title, points: user.points, shopUrl: getShopUrl(user) }));
+  await notifyAdmins(translations.ru.adminPurchase({ id: purchase.id, name: user.name, userId: user.id, title: service.title, price: service.price }));
 });
 
 bot.catch((error) => {
