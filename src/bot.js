@@ -138,7 +138,7 @@ const translations = {
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
-    purchaseText: ({ title, points, shopUrl }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nThe product is reserved for you for 6 hours. To activate delivery, top up your store balance with $1.\n\nThis is not a fee: the $1 stays on your store balance and can be spent on any purchase.\n\nOpen the store with your personal link: ${shopUrl}`,
+    purchaseText: ({ title, points, shopUrl }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nThe product is reserved for you for 6 hours. To activate delivery, top up your store balance with $1.\n\nThis is not a fee: the $1 stays on your store balance and can be spent on any purchase.\n\nOpen the store with your personal link: ${shopUrl}\n\nReferral bonus: top up $1 and receive $2 on your store balance.`,
     adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
     help: 'Commands: /start, /balance, /link, /shop. Invite a friend with your link and get 1 point after their first bot launch.',
     services: {
