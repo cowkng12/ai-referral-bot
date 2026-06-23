@@ -80,7 +80,7 @@ const translations = {
     notEnoughPoints: 'Недостаточно баллов.',
     notEnoughPointsText: ({ price, points }) => `Нужно ${price} балл., у тебя ${points}.`,
     purchaseCreated: 'Покупка создана.',
-    purchaseText: ({ title, points, shopUrl }) => `Поздравляем с покупкой: ${title}. Остаток: ${points} балл.\n\nТовар зарезервирован за вами на 6 часов. Чтобы активировать выдачу, пополните баланс магазина на $1.\n\nЭто не комиссия: $1 останется у вас на балансе магазина, и его можно будет потратить на любую покупку.\n\nПерейдите в магазин по персональной ссылке: ${shopUrl}`,
+    purchaseText: ({ title, points, shopUrl }) => `Поздравляем с покупкой: ${title}. Остаток: ${points} балл.\n\nТовар зарезервирован за вами на 6 часов. Чтобы активировать выдачу, пополните баланс магазина на $1.\n\nЭто не комиссия: $1 останется у вас на балансе магазина, и его можно будет потратить на любую покупку.\n\nПромокод на пополнение: REF50 - скидка 50%.\n\nПерейдите в магазин по персональной ссылке: ${shopUrl}`,
     adminPurchase: ({ id, name, userId, title, price }) => `Новая покупка #${id}\nПользователь: ${name} (${userId})\nСервис: ${title}\nЦена: ${price}`,
     help: 'Команды: /start, /balance, /link, /shop. Пригласи друга по ссылке и получи 1 балл после его первого запуска бота.',
     services: {
@@ -138,7 +138,7 @@ const translations = {
     notEnoughPoints: 'Not enough points.',
     notEnoughPointsText: ({ price, points }) => `You need ${price} pts, you have ${points}.`,
     purchaseCreated: 'Purchase created.',
-    purchaseText: ({ title, points, shopUrl }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nThe product is reserved for you for 6 hours. To activate delivery, top up your store balance with $1.\n\nThis is not a fee: the $1 stays on your store balance and can be spent on any purchase.\n\nOpen the store with your personal link: ${shopUrl}\n\nReferral bonus: top up $1 and receive $2 on your store balance.`,
+    purchaseText: ({ title, points, shopUrl }) => `Congratulations on your purchase: ${title}. Remaining balance: ${points} pts.\n\nThe product is reserved for you for 6 hours. To activate delivery, top up your store balance with $1.\n\nThis is not a fee: the $1 stays on your store balance and can be spent on any purchase.\n\nTop-up promo code: REF50 - 50% discount.\n\nOpen the store with your personal link: ${shopUrl}\n\nReferral bonus: top up $1 and receive $2 on your store balance.`,
     adminPurchase: ({ id, name, userId, title, price }) => `New purchase #${id}\nUser: ${name} (${userId})\nService: ${title}\nPrice: ${price}`,
     help: 'Commands: /start, /balance, /link, /shop. Invite a friend with your link and get 1 point after their first bot launch.',
     services: {
@@ -196,7 +196,7 @@ const translations = {
     notEnoughPoints: '积分不足。',
     notEnoughPointsText: ({ price, points }) => `需要 ${price} 积分，你有 ${points}。`,
     purchaseCreated: '购买已创建。',
-    purchaseText: ({ title, points, shopUrl }) => `恭喜购买：${title}。剩余余额：${points} 积分。\n\n商品已为你保留 6 小时。要激活发货，请充值 $1 到商店余额。\n\n这不是手续费：$1 会留在你的商店余额中，可用于任意购买。\n\n请通过你的专属链接打开商店：${shopUrl}`,
+    purchaseText: ({ title, points, shopUrl }) => `恭喜购买：${title}。剩余余额：${points} 积分。\n\n商品已为你保留 6 小时。要激活发货，请充值 $1 到商店余额。\n\n这不是手续费：$1 会留在你的商店余额中，可用于任意购买。\n\n充值优惠码：REF50 - 50% 折扣。\n\n请通过你的专属链接打开商店：${shopUrl}`,
     adminPurchase: ({ id, name, userId, title, price }) => `新购买 #${id}\n用户：${name} (${userId})\n服务：${title}\n价格：${price}`,
     help: '命令：/start, /balance, /link, /shop。通过链接邀请好友，在他们首次启动机器人后获得 1 积分。',
     services: {
