@@ -93,7 +93,18 @@ const translations = {
       runway: 'Доступ к AI-инструментам для видео.',
       elevenlabs: 'Доступ к AI-озвучке и голосам.',
       notion: 'Подписка Notion AI для работы с текстами.',
-      pro_pack: 'Пакет премиум AI-сервисов.'
+      pro_pack: 'Пакет премиум AI-сервисов.',
+      kimi: 'Доступ к Kimi для длинного контекста и ресерча.',
+      windsurf: 'Подписка Windsurf Pro для разработки.',
+      replit: 'Доступ Replit Core для облачного кода.',
+      lovable: 'Доступ Lovable Pro для создания веб-приложений.',
+      firefly: 'Доступ Adobe Firefly для генерации изображений.',
+      ideogram: 'Доступ Ideogram Plus для дизайна и постеров.',
+      pika: 'Доступ Pika Pro для AI-видео.',
+      luma: 'Доступ Luma Dream Machine для видео.',
+      udio: 'Доступ Udio Pro для музыки.',
+      grammarly: 'Подписка Grammarly Pro для текстов.',
+      openrouter: 'OpenRouter Credits для API-доступа к AI-моделям.'
     }
   },
   en: {
@@ -151,7 +162,18 @@ const translations = {
       runway: 'Access to AI tools for video.',
       elevenlabs: 'Access to AI voiceover and voices.',
       notion: 'Notion AI subscription for working with text.',
-      pro_pack: 'Premium AI services package.'
+      pro_pack: 'Premium AI services package.',
+      kimi: 'Access to Kimi for long context and research.',
+      windsurf: 'Windsurf Pro subscription for development.',
+      replit: 'Replit Core access for cloud coding.',
+      lovable: 'Lovable Pro access for building web apps.',
+      firefly: 'Adobe Firefly access for image generation.',
+      ideogram: 'Ideogram Plus access for design and posters.',
+      pika: 'Pika Pro access for AI video.',
+      luma: 'Luma Dream Machine access for video.',
+      udio: 'Udio Pro access for music.',
+      grammarly: 'Grammarly Pro subscription for writing.',
+      openrouter: 'OpenRouter Credits for API access to AI models.'
     }
   },
   zh: {
@@ -209,7 +231,18 @@ const translations = {
       runway: '访问用于视频的 AI 工具。',
       elevenlabs: '访问 AI 配音和语音。',
       notion: '用于文本工作的 Notion AI 订阅。',
-      pro_pack: '高级 AI 服务套餐。'
+      pro_pack: '高级 AI 服务套餐。',
+      kimi: '访问 Kimi，用于长上下文和研究。',
+      windsurf: '用于开发的 Windsurf Pro 订阅。',
+      replit: 'Replit Core 云端编程访问。',
+      lovable: 'Lovable Pro，用于创建网页应用。',
+      firefly: 'Adobe Firefly 图像生成访问。',
+      ideogram: 'Ideogram Plus，用于设计和海报。',
+      pika: 'Pika Pro AI 视频访问。',
+      luma: 'Luma Dream Machine 视频访问。',
+      udio: 'Udio Pro 音乐访问。',
+      grammarly: 'Grammarly Pro 写作订阅。',
+      openrouter: 'OpenRouter Credits，用于 AI 模型 API 访问。'
     }
   }
 };
@@ -277,6 +310,72 @@ const defaultDb = {
       title: 'AI Pro Pack',
       price: 45,
       description: 'Пакет премиум AI-сервисов.'
+    },
+    {
+      id: 'kimi',
+      title: 'Kimi Pro',
+      price: 8,
+      description: 'Доступ к Kimi для длинного контекста и ресерча.'
+    },
+    {
+      id: 'windsurf',
+      title: 'Windsurf Pro',
+      price: 10,
+      description: 'Подписка Windsurf Pro для разработки.'
+    },
+    {
+      id: 'replit',
+      title: 'Replit Core',
+      price: 10,
+      description: 'Доступ Replit Core для облачного кода.'
+    },
+    {
+      id: 'lovable',
+      title: 'Lovable Pro',
+      price: 12,
+      description: 'Доступ Lovable Pro для создания веб-приложений.'
+    },
+    {
+      id: 'firefly',
+      title: 'Adobe Firefly',
+      price: 8,
+      description: 'Доступ Adobe Firefly для генерации изображений.'
+    },
+    {
+      id: 'ideogram',
+      title: 'Ideogram Plus',
+      price: 8,
+      description: 'Доступ Ideogram Plus для дизайна и постеров.'
+    },
+    {
+      id: 'pika',
+      title: 'Pika Pro',
+      price: 10,
+      description: 'Доступ Pika Pro для AI-видео.'
+    },
+    {
+      id: 'luma',
+      title: 'Luma Dream Machine',
+      price: 10,
+      description: 'Доступ Luma Dream Machine для видео.'
+    },
+    {
+      id: 'udio',
+      title: 'Udio Pro',
+      price: 7,
+      description: 'Доступ Udio Pro для музыки.'
+    },
+    {
+      id: 'grammarly',
+      title: 'Grammarly Pro',
+      price: 7,
+      description: 'Подписка Grammarly Pro для текстов.'
+    },
+    {
+      id: 'openrouter',
+      title: 'OpenRouter Credits',
+      price: 5,
+      description: 'OpenRouter Credits для API-доступа к AI-моделям.'
     }
   ]
 };
