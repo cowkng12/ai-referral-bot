@@ -67,7 +67,7 @@ const translations = {
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 Моя ссылка\n\n${link}\n\nЗа каждого нового приглашенного ты получаешь 1 балл.`,
     adminOnly: 'Команда доступна только администратору.',
-    adminHelp: 'Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю',
+    adminHelp: 'Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю\nКнопка Ответить под обращением - ответить пользователю через бота',
     addPointsUsage: 'Использование: /addpoints USER_ID AMOUNT',
     pointsAdded: ({ amount, name, points }) => `Начислено ${amount} балл. пользователю ${name}. Баланс: ${points} балл.`,
     welcome: 'Привет! Приглашай людей по своей ссылке и получай 1 балл за каждого нового реферала. Баллы можно обменять на подписку.',
@@ -136,7 +136,7 @@ const translations = {
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 My Link\n\n${link}\n\nYou get 1 point for each new invited user.`,
     adminOnly: 'This command is available only to administrators.',
-    adminHelp: 'Admin commands:\n/addpoints USER_ID AMOUNT - add points to a user',
+    adminHelp: 'Admin commands:\n/addpoints USER_ID AMOUNT - add points to a user\nReply button under support requests - answer users through the bot',
     addPointsUsage: 'Usage: /addpoints USER_ID AMOUNT',
     pointsAdded: ({ amount, name, points }) => `Added ${amount} pts to ${name}. Balance: ${points} pts.`,
     welcome: 'Hi! Invite people with your link and get 1 point for each new referral. Points can be exchanged for a subscription.',
@@ -205,7 +205,7 @@ const translations = {
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 我的链接\n\n${link}\n\n每邀请一个新用户，你将获得 1 积分。`,
     adminOnly: '此命令仅管理员可用。',
-    adminHelp: '管理员命令：\n/addpoints USER_ID AMOUNT - 给用户添加积分',
+    adminHelp: '管理员命令：\n/addpoints USER_ID AMOUNT - 给用户添加积分\n支持请求下方的回复按钮 - 通过机器人回复用户',
     addPointsUsage: '用法：/addpoints USER_ID AMOUNT',
     pointsAdded: ({ amount, name, points }) => `已给 ${name} 增加 ${amount} 积分。余额：${points} 积分。`,
     welcome: '你好！通过你的链接邀请用户，每个新推荐用户可获得 1 积分。积分可以兑换订阅。',
@@ -465,6 +465,7 @@ let db;
 let saveQueue = Promise.resolve();
 const bot = new Telegraf(token);
 const pendingSupportUsers = new Set();
+const pendingAdminReplies = new Map();
 
 function getUserName(from) {
   return from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ') || String(from.id);
@@ -754,15 +755,23 @@ async function notifyAdmins(message) {
   await Promise.allSettled(adminIds.map((adminId) => bot.telegram.sendMessage(adminId, message)));
 }
 
+async function notifyAdminsWithReplyButton(message, userId) {
+  await Promise.allSettled(adminIds.map((adminId) => bot.telegram.sendMessage(
+    adminId,
+    message,
+    Markup.inlineKeyboard([[Markup.button.callback('Ответить', `support_reply:${userId}`)]])
+  )));
+}
+
 async function forwardSupportRequest(ctx, source) {
   const from = ctx.from;
-  await notifyAdmins([
+  await notifyAdminsWithReplyButton([
     `Новое обращение в поддержку ${source}`,
     `Пользователь: ${from.username ? `@${from.username}` : getUserName(from)}`,
     `ID: ${from.id}`,
     '',
     ctx.message.text
-  ].join('\n'));
+  ].join('\n'), from.id);
 }
 
 function isAdmin(from) {
@@ -891,7 +900,27 @@ bot.command('store', withSubscription(sendShop));
 bot.command('admin', sendAdminHelp);
 bot.command('addpoints', addPoints);
 
+bot.action(/^support_reply:(\d+)$/, async (ctx) => {
+  if (!isAdmin(ctx.from)) {
+    await ctx.answerCbQuery('Команда доступна только администратору.').catch(() => null);
+    return;
+  }
+
+  pendingAdminReplies.set(ctx.from.id, ctx.match[1]);
+  await ctx.answerCbQuery('Напишите ответ следующим сообщением.').catch(() => null);
+  await ctx.reply(`Напишите ответ пользователю ${ctx.match[1]} следующим сообщением.`);
+});
+
 bot.on('text', async (ctx, next) => {
+  const replyToUserId = pendingAdminReplies.get(ctx.from.id);
+
+  if (replyToUserId && isAdmin(ctx.from) && !ctx.message.text.startsWith('/')) {
+    pendingAdminReplies.delete(ctx.from.id);
+    await bot.telegram.sendMessage(replyToUserId, `Ответ поддержки:\n\n${ctx.message.text}`);
+    await ctx.reply('Ответ отправлен пользователю.');
+    return;
+  }
+
   if (ctx.message.text.startsWith('/') || !pendingSupportUsers.has(ctx.from.id)) {
     return next();
   }
