@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ai-referral-bot
+    name: nervahub-referral-bot
     env: node
     plan: starter
     buildCommand: npm install
@@ -20,12 +20,14 @@ services:
       - key: SUPABASE_STATE_TABLE
         value: app_state
       - key: SUPABASE_STATE_KEY
-        value: bot
+        value: nervahub-referral-bot
       - key: SHOP_URL
-        value: https://t.me/OminiKey_bot
+        value: https://t.me/NervaHub_bot
+      - key: SHOP_WEB_APP_URL
+        value: https://wakewlsamweneurix.onrender.com
       - key: SUPPORT_URL
-        value: https://t.me/OmniKeySUPPORT
+        value: https://t.me/NervaHubSUPPORT
       - key: MAIN_CHANNEL_URL
-        value: https://t.me/Omni_Key
+        value: https://t.me/NervaHub
       - key: MAIN_CHANNEL_USERNAME
-        value: '@Omni_Key'
+        value: '@NervaHub'

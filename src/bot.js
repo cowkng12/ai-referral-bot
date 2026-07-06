@@ -15,11 +15,11 @@ const adminIds = (process.env.ADMIN_IDS || '')
   .split(',')
   .map((id) => Number(id.trim()))
   .filter(Boolean);
-const shopUrl = process.env.SHOP_URL || 'https://t.me/OminiKey_bot';
-const shopWebAppUrl = process.env.SHOP_WEB_APP_URL || 'https://omini-key-miniapp.onrender.com';
-const supportUrl = process.env.SUPPORT_URL || '';
-const mainChannelUrl = process.env.MAIN_CHANNEL_URL || '';
-const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '';
+const shopUrl = process.env.SHOP_URL || 'https://t.me/NervaHub_bot';
+const shopWebAppUrl = process.env.SHOP_WEB_APP_URL || 'https://wakewlsamweneurix.onrender.com';
+const supportUrl = process.env.SUPPORT_URL || 'https://t.me/NervaHubSUPPORT';
+const mainChannelUrl = process.env.MAIN_CHANNEL_URL || 'https://t.me/NervaHub';
+const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '@NervaHub';
 const purchaseLimitPerService = 3;
 const moscowDateFormatter = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Moscow',
@@ -52,7 +52,7 @@ const translations = {
     newReferral: ({ name, points }) => `Новый реферал: ${name}. Начислен 1 балл.\nБаланс: ${points} балл.`,
     subscribeButton: '📣 Подписаться на канал',
     checkSubscriptionButton: '✅ Я подписался',
-    subscribeRequired: 'Чтобы пользоваться ботом, подпишись на наш канал Omni Key, затем нажми "Я подписался".',
+    subscribeRequired: 'Чтобы пользоваться ботом, подпишись на канал NervaHub, затем нажми "Я подписался".',
     balance: ({ points, referrals }) => `Баланс: ${points} балл.\nРефералов: ${referrals}.`,
     profileText: ({ name, id, points, referrals }) => `👤 Профиль\n\nПользователь: ${name}\nID: ${id}\nБаланс: ${points} балл.\nРефералов: ${referrals}`,
     progressText: ({ points, referrals }) => `📊 Прогресс\n\nБаллы: ${points}\nПриглашено друзей: ${referrals}`,
@@ -62,7 +62,7 @@ const translations = {
     supportText: '💬 Поддержка\n\nНапишите ваш вопрос или проблему следующим сообщением. Мы передадим обращение оператору.',
     supportReceived: 'Спасибо. Ваше обращение отправлено в поддержку.',
     channelText: ({ url }) => (url ? `📣 Основной канал: ${url}` : '📣 Основной канал пока не настроен.'),
-    storeText: () => '🛍 Магазин\n\nНаш магазин по продаже ИИ-сервисов: @OminiKey_bot',
+    storeText: () => '🛍 Магазин\n\nНаш магазин по продаже ИИ-сервисов: @NervaHub_bot',
     openStoreButton: 'Открыть магазин',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 Моя ссылка\n\n${link}\n\nЗа каждого нового приглашенного ты получаешь 1 балл.`,
@@ -121,7 +121,7 @@ const translations = {
     newReferral: ({ name, points }) => `New referral: ${name}. Added 1 point.\nBalance: ${points} pts.`,
     subscribeButton: '📣 Subscribe to channel',
     checkSubscriptionButton: '✅ I subscribed',
-    subscribeRequired: 'To use the bot, subscribe to our Omni Key channel, then tap "I subscribed".',
+    subscribeRequired: 'To use the bot, subscribe to the NervaHub channel, then tap "I subscribed".',
     balance: ({ points, referrals }) => `Balance: ${points} pts.\nReferrals: ${referrals}.`,
     profileText: ({ name, id, points, referrals }) => `👤 Profile\n\nUser: ${name}\nID: ${id}\nBalance: ${points} pts.\nReferrals: ${referrals}`,
     progressText: ({ points, referrals }) => `📊 Progress\n\nPoints: ${points}\nFriends invited: ${referrals}`,
@@ -131,7 +131,7 @@ const translations = {
     supportText: '💬 Support\n\nSend your question or problem in the next message. We will forward it to an operator.',
     supportReceived: 'Thank you. Your request has been sent to support.',
     channelText: ({ url }) => (url ? `📣 Main Channel: ${url}` : '📣 Main Channel is not configured yet.'),
-    storeText: () => '🛍 Store\n\nOur AI services store: @OminiKey_bot',
+    storeText: () => '🛍 Store\n\nOur AI services store: @NervaHub_bot',
     openStoreButton: 'Open store',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 My Link\n\n${link}\n\nYou get 1 point for each new invited user.`,
@@ -190,7 +190,7 @@ const translations = {
     newReferral: ({ name, points }) => `新的推荐用户：${name}。已增加 1 积分。\n余额：${points} 积分。`,
     subscribeButton: '📣 订阅频道',
     checkSubscriptionButton: '✅ 我已订阅',
-    subscribeRequired: '要使用机器人，请先订阅 Omni Key 频道，然后点击“我已订阅”。',
+    subscribeRequired: '要使用机器人，请先订阅 NervaHub 频道，然后点击“我已订阅”。',
     balance: ({ points, referrals }) => `余额：${points} 积分。\n推荐人数：${referrals}。`,
     profileText: ({ name, id, points, referrals }) => `👤 个人资料\n\n用户：${name}\nID：${id}\n余额：${points} 积分。\n推荐人数：${referrals}`,
     progressText: ({ points, referrals }) => `📊 进度\n\n积分：${points}\n已邀请好友：${referrals}`,
@@ -200,7 +200,7 @@ const translations = {
     supportText: '💬 支持\n\n请在下一条消息中发送你的问题。我们会转交给客服。',
     supportReceived: '谢谢。你的请求已发送给支持团队。',
     channelText: ({ url }) => (url ? `📣 主频道：${url}` : '📣 主频道尚未配置。'),
-    storeText: () => '🛍 商店\n\n我们的 AI 服务商店：@OminiKey_bot',
+    storeText: () => '🛍 商店\n\n我们的 AI 服务商店：@NervaHub_bot',
     openStoreButton: '打开商店',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 我的链接\n\n${link}\n\n每邀请一个新用户，你将获得 1 积分。`,
@@ -926,7 +926,7 @@ bot.on('text', async (ctx, next) => {
   }
 
   pendingSupportUsers.delete(ctx.from.id);
-  await forwardSupportRequest(ctx, 'OmniRef Bot');
+  await forwardSupportRequest(ctx, 'NervaHub Referral Bot');
   await ctx.reply(getCtxTranslation(ctx).supportReceived);
 });
 

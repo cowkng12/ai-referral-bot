@@ -1,7 +1,7 @@
 {
-  "name": "ai-referral-bot",
+  "name": "nervahub-referral-bot",
   "version": "1.0.0",
-  "description": "Telegram referral bot for earning points and buying AI services.",
+  "description": "NervaHub Telegram referral bot for earning points and buying AI services.",
   "main": "src/bot.js",
   "scripts": {
     "start": "node src/bot.js",
