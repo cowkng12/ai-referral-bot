@@ -90,7 +90,7 @@ SUPABASE_STATE_TABLE=app_state
 SUPABASE_STATE_KEY=aivoraref-bot
 SHOP_URL=https://t.me/AivoraHub_bot
 SHOP_WEB_APP_URL=https://wakewlsamweneurix.onrender.com
-SUPPORT_URL=https://t.me/AivoraRefSUPPORT
+SUPPORT_URL=https://t.me/AivoraHubSupport_bot
 MAIN_CHANNEL_URL=https://t.me/AivoraaHub
 MAIN_CHANNEL_USERNAME=@AivoraaHub
 ```

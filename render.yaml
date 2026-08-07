@@ -26,7 +26,7 @@ services:
       - key: SHOP_WEB_APP_URL
         value: https://wakewlsamweneurix.onrender.com
       - key: SUPPORT_URL
-        value: https://t.me/AivoraRefSUPPORT
+        value: https://t.me/AivoraHubSupport_bot
       - key: MAIN_CHANNEL_URL
         value: https://t.me/AivoraaHub
       - key: MAIN_CHANNEL_USERNAME

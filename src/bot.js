@@ -17,7 +17,7 @@ const adminIds = (process.env.ADMIN_IDS || '')
   .filter(Boolean);
 const shopWebAppUrl = process.env.SHOP_WEB_APP_URL || 'https://wakewlsamweneurix.onrender.com';
 const shopUrl = process.env.SHOP_URL || 'https://t.me/AivoraHub_bot';
-const supportUrl = process.env.SUPPORT_URL || 'https://t.me/AivoraRefSUPPORT';
+const supportUrl = process.env.SUPPORT_URL || 'https://t.me/AivoraHubSupport_bot';
 const mainChannelUrl = process.env.MAIN_CHANNEL_URL || 'https://t.me/AivoraaHub';
 const mainChannelUsername = process.env.MAIN_CHANNEL_USERNAME || '@AivoraaHub';
 const purchaseLimitPerService = 3;
@@ -59,7 +59,7 @@ const translations = {
     leaderboardText: ({ referrals, leaders }) => `🏆 Топ реферальщиков\n\nТы пригласил: ${referrals}\n\n${leaders}`,
     leaderboardEmpty: 'Пока нет приглашенных пользователей.',
     redeemText: ({ services }) => `🎁 Обмен\n\nВыбери сервис для обмена баллов:\n\n${services}`,
-    supportText: '💬 Поддержка\n\nВы находитесь в чате с поддержкой.\nНапишите вопрос, отправьте фото или видео. Чтобы завершить чат, напишите /stopchat.',
+    supportText: 'Если у вас возникли проблемы или вопросы, то откройте тикет в боте: @AivoraHubSupport_bot',
     supportReceived: 'Спасибо. Ваше обращение отправлено в поддержку.',
     supportFollowUp: 'Вопрос не решен, или остались еще вопросы? Напишите еще одно сообщение.\n\nЕсли все вопросы решены, напишите команду /stopchat.',
     supportClosed: 'Диалог с поддержкой завершен.',
@@ -132,7 +132,7 @@ const translations = {
     leaderboardText: ({ referrals, leaders }) => `🏆 Referral leaderboard\n\nYou invited: ${referrals}\n\n${leaders}`,
     leaderboardEmpty: 'No invited users yet.',
     redeemText: ({ services }) => `🎁 Redeem\n\nChoose a service to exchange points:\n\n${services}`,
-    supportText: '💬 Support\n\nYou are now in a support chat.\nSend your question, photo, or video. To finish the chat, send /stopchat.',
+    supportText: 'If you have any problems or questions, open a ticket in the bot: @AivoraHubSupport_bot',
     supportReceived: 'Thank you. Your request has been sent to support.',
     supportFollowUp: 'If the issue is not solved or you have more questions, send another message.\n\nIf everything is solved, send /stopchat.',
     supportClosed: 'The support chat has been closed.',
@@ -205,7 +205,7 @@ const translations = {
     leaderboardText: ({ referrals, leaders }) => `🏆 推荐排行榜\n\n你已邀请：${referrals}\n\n${leaders}`,
     leaderboardEmpty: '目前还没有邀请用户。',
     redeemText: ({ services }) => `🎁 兑换\n\n选择要兑换的服务：\n\n${services}`,
-    supportText: '💬 支持\n\n你正在与客服聊天。\n请发送问题、照片或视频。要结束聊天，请发送 /stopchat。',
+    supportText: '如果你遇到问题或有疑问，请在此机器人中创建工单：@AivoraHubSupport_bot',
     supportReceived: '谢谢。你的请求已发送给支持团队。',
     supportFollowUp: '如果问题尚未解决，或你还有其他问题，请继续发送消息。\n\n如果问题已解决，请发送 /stopchat。',
     supportClosed: '支持聊天已结束。',
@@ -739,10 +739,6 @@ function sendRedeem(ctx) {
 }
 
 function sendSupport(ctx) {
-  const user = ensureUser(ctx.from);
-  user.supportChatOpen = true;
-  saveDb();
-
   return ctx.reply(getCtxTranslation(ctx).supportText);
 }
 
