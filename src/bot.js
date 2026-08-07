@@ -59,15 +59,18 @@ const translations = {
     leaderboardText: ({ referrals, leaders }) => `🏆 Топ реферальщиков\n\nТы пригласил: ${referrals}\n\n${leaders}`,
     leaderboardEmpty: 'Пока нет приглашенных пользователей.',
     redeemText: ({ services }) => `🎁 Обмен\n\nВыбери сервис для обмена баллов:\n\n${services}`,
-    supportText: '💬 Поддержка\n\nНапишите ваш вопрос или проблему следующим сообщением. Мы передадим обращение оператору.',
+    supportText: '💬 Поддержка\n\nВы находитесь в чате с поддержкой.\nНапишите вопрос, отправьте фото или видео. Чтобы завершить чат, напишите /stopchat.',
     supportReceived: 'Спасибо. Ваше обращение отправлено в поддержку.',
+    supportFollowUp: 'Вопрос не решен, или остались еще вопросы? Напишите еще одно сообщение.\n\nЕсли все вопросы решены, напишите команду /stopchat.',
+    supportClosed: 'Диалог с поддержкой завершен.',
+    supportNoActiveChat: 'У вас нет активного диалога с поддержкой.',
     channelText: ({ url }) => (url ? `📣 Основной канал: ${url}` : '📣 Основной канал пока не настроен.'),
     storeText: () => '🛍 Магазин\n\nМагазин подписок на нейронки доступен по кнопке ниже.',
     openStoreButton: 'Открыть магазин',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 Моя ссылка\n\n${link}\n\nЗа каждого нового приглашенного ты получаешь 1 балл.`,
     adminOnly: 'Команда доступна только администратору.',
-    adminHelp: 'Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю\nКнопка Ответить под обращением - ответить пользователю через бота',
+    adminHelp: 'Админ-команды:\n/addpoints USER_ID AMOUNT - выдать баллы пользователю\nКнопка Ответить под обращением - ответить пользователю через бота текстом, фото или видео',
     addPointsUsage: 'Использование: /addpoints USER_ID AMOUNT',
     pointsAdded: ({ amount, name, points }) => `Начислено ${amount} балл. пользователю ${name}. Баланс: ${points} балл.`,
     welcome: 'Привет! Приглашай людей по своей ссылке и получай 1 балл за каждого нового реферала. Баллы можно обменять на подписку.',
@@ -128,15 +131,18 @@ const translations = {
     leaderboardText: ({ referrals, leaders }) => `🏆 Referral leaderboard\n\nYou invited: ${referrals}\n\n${leaders}`,
     leaderboardEmpty: 'No invited users yet.',
     redeemText: ({ services }) => `🎁 Redeem\n\nChoose a service to exchange points:\n\n${services}`,
-    supportText: '💬 Support\n\nSend your question or problem in the next message. We will forward it to an operator.',
+    supportText: '💬 Support\n\nYou are now in a support chat.\nSend your question, photo, or video. To finish the chat, send /stopchat.',
     supportReceived: 'Thank you. Your request has been sent to support.',
+    supportFollowUp: 'If the issue is not solved or you have more questions, send another message.\n\nIf everything is solved, send /stopchat.',
+    supportClosed: 'The support chat has been closed.',
+    supportNoActiveChat: 'You do not have an active support chat.',
     channelText: ({ url }) => (url ? `📣 Main Channel: ${url}` : '📣 Main Channel is not configured yet.'),
     storeText: () => '🛍 Store\n\nThe AI subscription store is available from the button below.',
     openStoreButton: 'Open store',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 My Link\n\n${link}\n\nYou get 1 point for each new invited user.`,
     adminOnly: 'This command is available only to administrators.',
-    adminHelp: 'Admin commands:\n/addpoints USER_ID AMOUNT - add points to a user\nReply button under support requests - answer users through the bot',
+    adminHelp: 'Admin commands:\n/addpoints USER_ID AMOUNT - add points to a user\nReply button under support requests - answer users through the bot with text, photos, or videos',
     addPointsUsage: 'Usage: /addpoints USER_ID AMOUNT',
     pointsAdded: ({ amount, name, points }) => `Added ${amount} pts to ${name}. Balance: ${points} pts.`,
     welcome: 'Hi! Invite people with your link and get 1 point for each new referral. Points can be exchanged for a subscription.',
@@ -197,15 +203,18 @@ const translations = {
     leaderboardText: ({ referrals, leaders }) => `🏆 推荐排行榜\n\n你已邀请：${referrals}\n\n${leaders}`,
     leaderboardEmpty: '目前还没有邀请用户。',
     redeemText: ({ services }) => `🎁 兑换\n\n选择要兑换的服务：\n\n${services}`,
-    supportText: '💬 支持\n\n请在下一条消息中发送你的问题。我们会转交给客服。',
+    supportText: '💬 支持\n\n你正在与客服聊天。\n请发送问题、照片或视频。要结束聊天，请发送 /stopchat。',
     supportReceived: '谢谢。你的请求已发送给支持团队。',
+    supportFollowUp: '如果问题尚未解决，或你还有其他问题，请继续发送消息。\n\n如果问题已解决，请发送 /stopchat。',
+    supportClosed: '支持聊天已结束。',
+    supportNoActiveChat: '你当前没有活跃的支持聊天。',
     channelText: ({ url }) => (url ? `📣 主频道：${url}` : '📣 主频道尚未配置。'),
     storeText: () => '🛍 商店\n\n可通过下方按钮打开 AI 订阅商店。',
     openStoreButton: '打开商店',
     chooseLanguage: 'Выберите язык / Choose language / 选择语言:',
     referralLink: ({ link }) => `🔗 我的链接\n\n${link}\n\n每邀请一个新用户，你将获得 1 积分。`,
     adminOnly: '此命令仅管理员可用。',
-    adminHelp: '管理员命令：\n/addpoints USER_ID AMOUNT - 给用户添加积分\n支持请求下方的回复按钮 - 通过机器人回复用户',
+    adminHelp: '管理员命令：\n/addpoints USER_ID AMOUNT - 给用户添加积分\n支持请求下方的回复按钮 - 通过机器人用文字、照片或视频回复用户',
     addPointsUsage: '用法：/addpoints USER_ID AMOUNT',
     pointsAdded: ({ amount, name, points }) => `已给 ${name} 增加 ${amount} 积分。余额：${points} 积分。`,
     welcome: '你好！通过你的链接邀请用户，每个新推荐用户可获得 1 积分。积分可以兑换订阅。',
@@ -464,7 +473,6 @@ function saveDb(nextDb = db) {
 let db;
 let saveQueue = Promise.resolve();
 const bot = new Telegraf(token);
-const pendingSupportUsers = new Set();
 const pendingAdminReplies = new Map();
 
 function getUserName(from) {
@@ -507,6 +515,7 @@ function ensureUser(from) {
       languageSelected: false,
       referrals: [],
       subscribed: false,
+      supportChatOpen: false,
       dailyPurchaseDate: null,
       createdAt: new Date().toISOString()
     };
@@ -514,6 +523,7 @@ function ensureUser(from) {
   } else {
     db.users[id].name = getUserName(from);
     db.users[id].subscribed = Boolean(db.users[id].subscribed);
+    db.users[id].supportChatOpen = Boolean(db.users[id].supportChatOpen);
     db.users[id].pendingReferrerId = db.users[id].pendingReferrerId || null;
     db.users[id].referralRewarded = Boolean(db.users[id].referralRewarded || db.users[id].invitedBy);
     db.users[id].language = db.users[id].language || 'ru';
@@ -720,7 +730,10 @@ function sendRedeem(ctx) {
 }
 
 function sendSupport(ctx) {
-  pendingSupportUsers.add(ctx.from.id);
+  const user = ensureUser(ctx.from);
+  user.supportChatOpen = true;
+  saveDb();
+
   return ctx.reply(getCtxTranslation(ctx).supportText);
 }
 
@@ -763,15 +776,77 @@ async function notifyAdminsWithReplyButton(message, userId) {
   )));
 }
 
-async function forwardSupportRequest(ctx, source) {
-  const from = ctx.from;
-  await notifyAdminsWithReplyButton([
-    `Новое обращение в поддержку ${source}`,
+function getSupportUserHeader(from, title) {
+  return [
+    title,
     `Пользователь: ${from.username ? `@${from.username}` : getUserName(from)}`,
-    `ID: ${from.id}`,
-    '',
-    ctx.message.text
-  ].join('\n'), from.id);
+    `ID: ${from.id}`
+  ].join('\n');
+}
+
+function isCommandMessage(ctx) {
+  return Boolean(ctx.message?.text?.startsWith('/'));
+}
+
+function isStopChatCommand(ctx) {
+  return /^\/stopchat(?:@\w+)?(?:\s|$)/i.test(ctx.message?.text || '');
+}
+
+async function forwardSupportMessage(ctx, source) {
+  const from = ctx.from;
+  const header = getSupportUserHeader(from, `Новое обращение в поддержку ${source}`);
+  const text = ctx.message.text || '';
+
+  if (text) {
+    await notifyAdminsWithReplyButton([header, '', text].join('\n'), from.id);
+    return;
+  }
+
+  await notifyAdminsWithReplyButton(header, from.id);
+  await Promise.allSettled(adminIds.map((adminId) => ctx.telegram.copyMessage(
+    adminId,
+    ctx.chat.id,
+    ctx.message.message_id
+  )));
+}
+
+async function sendSupportAnswer(ctx, userId) {
+  const user = db.users[String(userId)];
+  const text = getUserTranslation(user || { language: 'ru' });
+  const messageText = ctx.message.text || '';
+
+  if (messageText) {
+    await bot.telegram.sendMessage(userId, `Ответ поддержки:\n\n${messageText}\n\n${text.supportFollowUp}`);
+  } else {
+    await bot.telegram.sendMessage(userId, 'Ответ поддержки:');
+    await ctx.telegram.copyMessage(userId, ctx.chat.id, ctx.message.message_id);
+    await bot.telegram.sendMessage(userId, text.supportFollowUp);
+  }
+
+  if (user) {
+    user.supportChatOpen = true;
+    saveDb();
+  }
+}
+
+async function closeSupportChat(ctx) {
+  const user = ensureUser(ctx.from);
+  const text = getUserTranslation(user);
+
+  if (!user.supportChatOpen) {
+    await ctx.reply(text.supportNoActiveChat);
+    return;
+  }
+
+  user.supportChatOpen = false;
+  saveDb();
+
+  await ctx.reply(text.supportClosed);
+  await notifyAdmins([
+    'Пользователь завершил диалог с поддержкой.',
+    `Пользователь: ${getUserName(ctx.from)}`,
+    `ID: ${ctx.from.id}`
+  ].join('\n'));
 }
 
 function isAdmin(from) {
@@ -813,6 +888,7 @@ function addPoints(ctx) {
     languageSelected: true,
     referrals: [],
     subscribed: false,
+    supportChatOpen: false,
     dailyPurchaseDate: null,
     createdAt: new Date().toISOString()
   };
@@ -823,6 +899,39 @@ function addPoints(ctx) {
 
   return ctx.reply(text.pointsAdded({ amount, name: user.name, points: user.points }));
 }
+
+bot.on('message', async (ctx, next) => {
+  if (!ctx.message || !ctx.from) {
+    return next();
+  }
+
+  const replyToUserId = pendingAdminReplies.get(ctx.from.id);
+
+  if (replyToUserId && isAdmin(ctx.from) && !isCommandMessage(ctx)) {
+    pendingAdminReplies.delete(ctx.from.id);
+    await sendSupportAnswer(ctx, replyToUserId);
+    await ctx.reply('Ответ отправлен пользователю. Диалог оставлен открытым.');
+    return;
+  }
+
+  if (isStopChatCommand(ctx)) {
+    await closeSupportChat(ctx);
+    return;
+  }
+
+  if (isCommandMessage(ctx)) {
+    return next();
+  }
+
+  const user = ensureUser(ctx.from);
+
+  if (!user.supportChatOpen) {
+    return next();
+  }
+
+  await forwardSupportMessage(ctx, 'AivoraRef Bot');
+  await ctx.reply(getUserTranslation(user).supportReceived);
+});
 
 bot.start(async (ctx) => {
   const isNewUser = !db.users[String(ctx.from.id)];
@@ -909,25 +1018,6 @@ bot.action(/^support_reply:(\d+)$/, async (ctx) => {
   pendingAdminReplies.set(ctx.from.id, ctx.match[1]);
   await ctx.answerCbQuery('Напишите ответ следующим сообщением.').catch(() => null);
   await ctx.reply(`Напишите ответ пользователю ${ctx.match[1]} следующим сообщением.`);
-});
-
-bot.on('text', async (ctx, next) => {
-  const replyToUserId = pendingAdminReplies.get(ctx.from.id);
-
-  if (replyToUserId && isAdmin(ctx.from) && !ctx.message.text.startsWith('/')) {
-    pendingAdminReplies.delete(ctx.from.id);
-    await bot.telegram.sendMessage(replyToUserId, `Ответ поддержки:\n\n${ctx.message.text}`);
-    await ctx.reply('Ответ отправлен пользователю.');
-    return;
-  }
-
-  if (ctx.message.text.startsWith('/') || !pendingSupportUsers.has(ctx.from.id)) {
-    return next();
-  }
-
-  pendingSupportUsers.delete(ctx.from.id);
-  await forwardSupportRequest(ctx, 'AivoraRef Bot');
-  await ctx.reply(getCtxTranslation(ctx).supportReceived);
 });
 
 bot.action(/^lang:(ru|en|zh)$/, async (ctx) => {
