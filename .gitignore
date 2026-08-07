@@ -2,4 +2,5 @@ node_modules/
 .env
 data/
 bot.log
+bot.err
 npm-debug.log*

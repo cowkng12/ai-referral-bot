@@ -1,12 +1,12 @@
-# NervaHub Referral Bot
+# AivoraRef Bot
 
-Telegram-бот для реферальной системы: пользователь приглашает людей, получает 1 балл за каждого нового реферала и тратит баллы на ИИ-сервисы.
+Telegram-бот AivoraRef: пользователь приглашает людей, получает 1 балл за каждого нового реферала и тратит баллы на подписки на нейронки.
 
 ## Возможности
 
 - Реферальная ссылка для каждого пользователя.
 - Автоматическое начисление 1 балла за нового приглашенного пользователя.
-- Проверка подписки на канал `https://t.me/NervaHub` при входе.
+- Обязательная проверка подписки на канал `https://t.me/AivoraaHub` при входе.
 - Защита от самореферала и повторного начисления одному пользователю.
 - Баланс и количество рефералов.
 - Магазин ИИ-сервисов с покупкой за баллы.
@@ -35,9 +35,9 @@ ADMIN_IDS=123456789
 ```
 
 `ADMIN_IDS` можно указать через запятую: `123,456`.
-`SHOP_URL` - ссылка на магазин `@NervaHub_bot`, она показывается в разделе `Store`.
-`SHOP_WEB_APP_URL` - ссылка на Mini App магазина NervaHub.
-`SUPPORT_URL` - ссылка на поддержку `@NervaHubSUPPORT`.
+`SHOP_URL` - ссылка на магазин, она показывается в разделе `Store`.
+`SHOP_WEB_APP_URL` - ссылка на Mini App магазина.
+`SUPPORT_URL` - ссылка на поддержку.
 `MAIN_CHANNEL_URL` - ссылка на основной канал.
 `MAIN_CHANNEL_USERNAME` - username канала для проверки подписки. Чтобы проверка работала стабильно, добавь бота администратором в канал.
 `SUPABASE_URL` и `SUPABASE_SERVICE_ROLE_KEY` включают постоянное хранилище Supabase. Если они не заданы, бот локально использует `data/db.json`.
@@ -87,12 +87,12 @@ ADMIN_IDS=123456789
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 SUPABASE_STATE_TABLE=app_state
-SUPABASE_STATE_KEY=nervahub-referral-bot
-SHOP_URL=https://t.me/NervaHub_bot
+SUPABASE_STATE_KEY=aivoraref-bot
+SHOP_URL=https://t.me/AivoraHub_bot
 SHOP_WEB_APP_URL=https://wakewlsamweneurix.onrender.com
-SUPPORT_URL=https://t.me/NervaHubSUPPORT
-MAIN_CHANNEL_URL=https://t.me/NervaHub
-MAIN_CHANNEL_USERNAME=@NervaHub
+SUPPORT_URL=https://t.me/AivoraRefSUPPORT
+MAIN_CHANNEL_URL=https://t.me/AivoraaHub
+MAIN_CHANNEL_USERNAME=@AivoraaHub
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` бери в Supabase: Project Settings -> API -> service_role key. Не публикуй этот ключ в коде или README.

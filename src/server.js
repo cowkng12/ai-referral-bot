@@ -24,7 +24,7 @@ function startKeepAlive() {
 }
 
 app.get('/', (req, res) => {
-  res.send('AI Referral Bot is running.');
+  res.send('AivoraRef bot is running.');
 });
 
 app.get('/health', (req, res) => {

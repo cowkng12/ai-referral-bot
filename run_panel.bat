@@ -2,7 +2,7 @@
 chcp 65001 >nul
 cd /d "%~dp0"
 
-echo AI Referral Bot control panel launcher
+echo AivoraRef Bot control panel launcher
 echo.
 echo The control panel will run locally in this window.
 echo Open http://localhost:3000 and press Start bot.

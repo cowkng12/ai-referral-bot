@@ -31,7 +31,7 @@ function renderPage() {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Referral Bot Panel</title>
+  <title>AivoraRef Bot Panel</title>
   <style>
     body { margin: 0; font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; }
     main { width: min(760px, calc(100% - 32px)); margin: 40px auto; }

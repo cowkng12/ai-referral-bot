@@ -2,7 +2,7 @@
 chcp 65001 >nul
 cd /d "%~dp0"
 
-echo AI Referral Bot local launcher
+echo AivoraRef Bot local launcher
 echo.
 echo The Telegram bot will run locally in this window via polling.
 echo To stop the bot, press Ctrl+C, then confirm with Y if Windows asks.

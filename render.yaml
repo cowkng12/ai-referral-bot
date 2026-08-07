@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: nervahub-referral-bot
+    name: aivoraref-bot
     env: node
     plan: starter
     buildCommand: npm install
@@ -20,14 +20,14 @@ services:
       - key: SUPABASE_STATE_TABLE
         value: app_state
       - key: SUPABASE_STATE_KEY
-        value: nervahub-referral-bot
+        value: aivoraref-bot
       - key: SHOP_URL
-        value: https://t.me/NervaHub_bot
+        value: https://t.me/AivoraHub_bot
       - key: SHOP_WEB_APP_URL
         value: https://wakewlsamweneurix.onrender.com
       - key: SUPPORT_URL
-        value: https://t.me/NervaHubSUPPORT
+        value: https://t.me/AivoraRefSUPPORT
       - key: MAIN_CHANNEL_URL
-        value: https://t.me/NervaHub
+        value: https://t.me/AivoraaHub
       - key: MAIN_CHANNEL_USERNAME
-        value: '@NervaHub'
+        value: '@AivoraaHub'
