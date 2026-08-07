@@ -64,6 +64,7 @@ const translations = {
     supportFollowUp: 'Вопрос не решен, или остались еще вопросы? Напишите еще одно сообщение.\n\nЕсли все вопросы решены, напишите команду /stopchat.',
     supportClosed: 'Диалог с поддержкой завершен.',
     supportNoActiveChat: 'У вас нет активного диалога с поддержкой.',
+    supportMenuBlocked: 'Сначала завершите чат с поддержкой.\n\nЧтобы завершить, напишите команду /stopchat.',
     channelText: ({ url }) => (url ? `📣 Основной канал: ${url}` : '📣 Основной канал пока не настроен.'),
     storeText: () => '🛍 Магазин\n\nМагазин подписок на нейронки доступен по кнопке ниже.',
     openStoreButton: 'Открыть магазин',
@@ -136,6 +137,7 @@ const translations = {
     supportFollowUp: 'If the issue is not solved or you have more questions, send another message.\n\nIf everything is solved, send /stopchat.',
     supportClosed: 'The support chat has been closed.',
     supportNoActiveChat: 'You do not have an active support chat.',
+    supportMenuBlocked: 'Please finish the support chat first.\n\nTo finish it, send /stopchat.',
     channelText: ({ url }) => (url ? `📣 Main Channel: ${url}` : '📣 Main Channel is not configured yet.'),
     storeText: () => '🛍 Store\n\nThe AI subscription store is available from the button below.',
     openStoreButton: 'Open store',
@@ -208,6 +210,7 @@ const translations = {
     supportFollowUp: '如果问题尚未解决，或你还有其他问题，请继续发送消息。\n\n如果问题已解决，请发送 /stopchat。',
     supportClosed: '支持聊天已结束。',
     supportNoActiveChat: '你当前没有活跃的支持聊天。',
+    supportMenuBlocked: '请先结束支持聊天。\n\n要结束聊天，请发送 /stopchat。',
     channelText: ({ url }) => (url ? `📣 主频道：${url}` : '📣 主频道尚未配置。'),
     storeText: () => '🛍 商店\n\n可通过下方按钮打开 AI 订阅商店。',
     openStoreButton: '打开商店',
@@ -479,8 +482,12 @@ function getUserName(from) {
   return from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ') || String(from.id);
 }
 
+function getUserDisplayName(from) {
+  return [from.first_name, from.last_name].filter(Boolean).join(' ') || from.username || String(from.id);
+}
+
 function getPublicDisplayName(user) {
-  return String(user.name || user.id).replace(/^@/, '');
+  return String(user.displayName || user.name || user.id).replace(/^@/, '');
 }
 
 function getShopUrl(user) {
@@ -507,6 +514,7 @@ function ensureUser(from) {
     db.users[id] = {
       id: from.id,
       name: getUserName(from),
+      displayName: getUserDisplayName(from),
       points: 0,
       invitedBy: null,
       pendingReferrerId: null,
@@ -522,6 +530,7 @@ function ensureUser(from) {
     saveDb();
   } else {
     db.users[id].name = getUserName(from);
+    db.users[id].displayName = getUserDisplayName(from);
     db.users[id].subscribed = Boolean(db.users[id].subscribed);
     db.users[id].supportChatOpen = Boolean(db.users[id].supportChatOpen);
     db.users[id].pendingReferrerId = db.users[id].pendingReferrerId || null;
@@ -792,6 +801,34 @@ function isStopChatCommand(ctx) {
   return /^\/stopchat(?:@\w+)?(?:\s|$)/i.test(ctx.message?.text || '');
 }
 
+function isMainMenuMessage(ctx) {
+  const messageText = ctx.message?.text?.trim();
+
+  if (!messageText) {
+    return false;
+  }
+
+  const menuTexts = new Set([
+    ...Object.values(translations).flatMap((text) => [
+      text.profile,
+      text.redeem,
+      text.myLink,
+      text.progress,
+      text.leaderboard,
+      text.store,
+      text.support,
+      text.mainChannel,
+      text.changeLanguage
+    ]),
+    'Моя ссылка',
+    'Магазин',
+    'Помощь',
+    'Ссылка на магазин'
+  ]);
+
+  return menuTexts.has(messageText);
+}
+
 async function forwardSupportMessage(ctx, source) {
   const from = ctx.from;
   const header = getSupportUserHeader(from, `Новое обращение в поддержку ${source}`);
@@ -880,6 +917,7 @@ function addPoints(ctx) {
   const user = db.users[userId] || {
     id: Number(userId),
     name: userId,
+    displayName: userId,
     points: 0,
     invitedBy: null,
     pendingReferrerId: null,
@@ -927,6 +965,11 @@ bot.on('message', async (ctx, next) => {
 
   if (!user.supportChatOpen) {
     return next();
+  }
+
+  if (isMainMenuMessage(ctx)) {
+    await ctx.reply(getUserTranslation(user).supportMenuBlocked);
+    return;
   }
 
   await forwardSupportMessage(ctx, 'AivoraRef Bot');
