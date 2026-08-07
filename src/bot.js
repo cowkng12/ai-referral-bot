@@ -643,11 +643,6 @@ function subscribeKeyboard(user) {
 async function isSubscribed(ctx) {
   const user = ensureUser(ctx.from);
 
-  if (user.subscribed) {
-    await rewardReferral(user);
-    return true;
-  }
-
   if (!mainChannelUsername) {
     user.subscribed = true;
     saveDb();
@@ -657,11 +652,12 @@ async function isSubscribed(ctx) {
 
   try {
     const member = await ctx.telegram.getChatMember(mainChannelUsername, ctx.from.id);
-    const subscribed = !['left', 'kicked'].includes(member.status);
+    const subscribed = !['left', 'kicked'].includes(member.status) && member.is_member !== false;
+
+    user.subscribed = subscribed;
+    saveDb();
 
     if (subscribed) {
-      user.subscribed = true;
-      saveDb();
       await rewardReferral(user);
     }
 
